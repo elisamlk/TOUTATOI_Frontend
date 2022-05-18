@@ -14,8 +14,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import kidId from "./reducers/kidId";
+import kidFirstName from "./reducers/kidFirstName";
+import { Provider } from "react-redux";
+import { createStore, combineReducers } from "redux";
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const store = createStore(combineReducers({ kidId, kidFirstName }));
 
 const BottomNavigator = () => {
   return (
@@ -52,19 +58,21 @@ const BottomNavigator = () => {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Accueil" component={AccueilScreen} />
-        <Stack.Screen name="KidProfil" component={KidProfilScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="SignIn" component={SignInScreen} />
-        <Stack.Screen
-          name="ConfirmationCode"
-          component={ConfirmationCodeScreen}
-        />
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Accueil" component={AccueilScreen} />
+          <Stack.Screen name="KidProfil" component={KidProfilScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen
+            name="ConfirmationCode"
+            component={ConfirmationCodeScreen}
+          />
 
-        <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
