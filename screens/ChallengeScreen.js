@@ -1,10 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { connect } from "react-redux";
 
-export default function ChallengeScreen(props) {
+function ChallengeScreen(props) {
+  const [funFact, setFunFact] = useState("");
+  const [activeKid, setActiveKid] = useState({});
+
+  useEffect(() => {
+    setActiveKid(props.kidList.find((e) => e.isActive == true));
+    async function getChallenge() {
+      var rawResponse = await fetch(
+        `https://sheltered-tor-38149.herokuapp.com/getChallengeOfTheDay?kidIdFromFront=628351ad7fb1c5050a07b576`
+      );
+      var response = await rawResponse.json();
+      setFunFact(response.challenge.funFact);
+    }
+    getChallenge();
+    console.log(funFact);
+  }, []);
+
+  console.log("active kid ", activeKid);
   return (
     <View style={styles.container}>
-      <Text>Challenge</Text>
+      <Text>Défi de {activeKid.kidFirstName}</Text>
+      <Text>{funFact}</Text>
     </View>
   );
 }
@@ -16,3 +35,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+function mapStateToProps(state) {
+  return { kidList: state.kidList };
+}
+
+export default connect(mapStateToProps, null)(ChallengeScreen);
