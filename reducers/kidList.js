@@ -8,8 +8,17 @@ export default function (
   ],
   action
 ) {
-  if (action.type == "saveKidList") {
+  if (action.type == "submitKidList") {
     return action.kidList;
+  } else if (action.type == "addKid") {
+    return [...kidList, action.kid];
+  } else if (action.type == "deleteKid") {
+    return kidList.filter((e) => e.kidId !== action.kidId);
+  } else if (action.type == "updateKid") {
+    let kidToUpdate = kidList.find((e) => e.kidId === action.kid.kidId);
+    kidToUpdate.isActive = action.kid.isActive;
+    kidList.filter((e) => e.kidId !== action.kid.kidId);
+    return [...kidList, action.kid];
   } else {
     return kidList;
   }

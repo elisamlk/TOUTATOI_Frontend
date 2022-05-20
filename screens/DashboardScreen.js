@@ -6,9 +6,9 @@ import {
   StatusBar,
   ScrollView,
   TouchableOpacity,
-  TextInput,
 } from "react-native";
-import { Text, Card } from "@rneui/themed";
+import { Text } from "@rneui/themed";
+import { Card } from "react-native-elements";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 
 // Onglet personnalisation des notions
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 15,
-    shadowOffset: { width: 5, height: 5},
+    shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 1,
     shadowRadius: 8,
     elevation: 8,

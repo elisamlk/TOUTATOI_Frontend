@@ -15,12 +15,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import kidList from "./reducers/kidList";
+import user from "./reducers/user";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const store = createStore(combineReducers({ kidList }));
+const store = createStore(combineReducers({ kidList, user }));
 
 const BottomNavigator = () => {
   return (
@@ -46,8 +47,7 @@ const BottomNavigator = () => {
         style: {
           backgroundColor: "#9CC5A1",
         },
-      }}
-    >
+      }}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Challenge" component={ChallengeScreen} />
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
