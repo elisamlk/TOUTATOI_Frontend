@@ -14,13 +14,15 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import activeUser from "./reducers/activeUser";
 import kidList from "./reducers/kidList";
+import firstKid from "./reducers/firstKid";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const store = createStore(combineReducers({ kidList }));
+const store = createStore(combineReducers({ activeUser, kidList, firstKid }));
 
 const BottomNavigator = () => {
   return (
