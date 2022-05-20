@@ -7,6 +7,7 @@ import SignInScreen from "./screens/SignInScreen";
 import HomeScreen from "./screens/HomeScreen";
 import DashboardScreen from "./screens/DashboardScreen";
 import ChallengeScreen from "./screens/ChallengeScreen";
+import LoadFonts from "./screens/LoadFonts";
 import { Ionicons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -14,13 +15,18 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import activeUser from "./reducers/activeUser";
 import kidList from "./reducers/kidList";
+import answerList from "./reducers/answerList";
+import firstKid from "./reducers/firstKid";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const store = createStore(combineReducers({ kidList }));
+const store = createStore(
+  combineReducers({ activeUser, kidList, firstKid, answerList })
+);
 
 const BottomNavigator = () => {
   return (
@@ -58,20 +64,22 @@ const BottomNavigator = () => {
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Accueil" component={AccueilScreen} />
-          <Stack.Screen name="KidProfil" component={KidProfilScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen
-            name="ConfirmationCode"
-            component={ConfirmationCodeScreen}
-          />
+      <LoadFonts>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Accueil" component={AccueilScreen} />
+            <Stack.Screen name="KidProfil" component={KidProfilScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen
+              name="ConfirmationCode"
+              component={ConfirmationCodeScreen}
+            />
 
-          <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
-        </Stack.Navigator>
-      </NavigationContainer>
+            <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </LoadFonts>
     </Provider>
   );
 }
