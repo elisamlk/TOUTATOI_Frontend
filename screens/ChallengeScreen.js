@@ -14,7 +14,8 @@ function ChallengeScreen(props) {
   const [challengeResponse, setChallengeResponse] = useState(false);
   const [pushResultsResponse, setPushResultsResponse] = useState(false);
 
-  let url = "http://172.20.10.4:3000";
+  let url = "http://192.168.10.162:3000";
+  let urlLaura = "http://192.168.10.162:3000";
   let urllocal = "http://192.168.10.119:3000";
   let urlheroku = "https://sheltered-tor-38149.herokuapp.com";
 
