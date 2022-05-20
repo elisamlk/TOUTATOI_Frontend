@@ -1,16 +1,22 @@
 export default function (
   kidList = [
     {
-      kidId: "628351ad7fb1c5050a07b576",
-      kidFirstName: "Laura",
+      kidId: "62875e64984ccb187d32afc1",
+      kidFirstName: "Carlotta",
       isActive: true,
     },
   ],
   action
 ) {
-  if (action.type == "saveKidList") {
+  if (action.type == "initKidList") {
     return action.kidList;
   } else {
-    return kidList;
+    if (action.type == "addKid") {
+      return [...kidList, action.kid];
+    } else {
+      if (action.type == "suppkid") {
+        return kidList.filter((e) => e.kidId !== action.kidId);
+      } else return kidList;
+    }
   }
 }
