@@ -7,11 +7,12 @@ import { connect } from "react-redux";
 import { createPortal } from "react-dom";
 
 function HomeScreen(props) {
-  //OVERLAY ADDKID-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-  const [isVisible, setIsVisible] = useState(false);
-  const [kidName, setKidName] = useState("");
-  const [kidGrade, setKidGrade] = useState("");
+  const [isVisible, setIsVisible] = useState(false); //AFFICHAGE DE L'OVERLAY
+  const [kidName, setKidName] = useState(""); //INPUT OVERLAY PRENOM DE L'ENFANT
+  const [kidGrade, setKidGrade] = useState(""); //INPUT OVERLAY CLASSE DE L'ENFANT
+  const [isSelected, setIsSelected] = useState(0); //GERE LE DISABLING DES ITEMS 'ENFANT'
 
+  //AJOUTER UN ENFANT A LA BASE DE DONNEES PUIS AU REDUCER-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   var handleAddKid = async () => {
     let data = await fetch(
       "http://192.168.10.142:3000/kids/addKid", //attention a bien remettre heroku
@@ -33,30 +34,30 @@ function HomeScreen(props) {
     setKidName();
   };
 
-  //RECUPERER LES ENFANTS DE L'USERID -_-_-_LES ENVOYER AU REDUCER
+  //RECUPERER LES ENFANTS DE L'USERID DEPUIS LA BDD -_-_-_LES ENVOYER AU REDUCER
   useEffect(() => {
     const getKid = async () => {
       let data = await fetch(
         `http://192.168.10.142:3000/kids/getKidsByUserId?userIdFromFront=${props.user}` //attention a bien remettre heroku
       );
       let response = await data.json();
+      let firstIsActive = false;
       var kidListFromDB = response.adminKidList.map((e, i) => {
+        if (i === 0) {
+          firstIsActive = true;
+        } else {
+          firstIsActive = false;
+        }
         return {
           kidId: e._id,
           kidFirstName: e.firstName,
-          isActive: false,
+          isActive: firstIsActive,
         };
       });
       props.submitKidList(kidListFromDB);
     };
     getKid();
   }, []);
-
-  //RECUPERER LES ENFANTS DE L'USERID -_-_-_LES RECUPERER DU REDUCER
-  const [kidList, setKidList] = useState([]);
-  useEffect(() => {
-    setKidList(props.kidListFromReducer);
-  }, [props.kidListFromReducer]);
 
   //LES SUPPRIMER _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ ROUTE QUASIMENT PRETE SAUF QU'ELLE NE SEMBLE PAS SUPPRIMER LE BON ENFANT...
   /*   var deleteKid = async (kid) => {
@@ -68,26 +69,20 @@ function HomeScreen(props) {
     );
   }; */
 
-  //LES AJOUTER/SELECTIONNER -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-  const [isSelected, setIsSelected] = useState(0);
+  //SELECTIONNER -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+  let isActiveToggle = (i) => {
+    setIsSelected(i);
+    props.activeAKid(i);
+  };
 
-  const kidsItem = kidList.map((kidItem, i) => {
-    let isActiveToggle = () => {
-      setIsSelected(i);
-      if (isSelected == i) {
-        kidItem.isActive = true;
-      } else if (isSelected != i) {
-        kidItem.isActive = false;
-      }
-      props.updateAKid(kidItem);
-    };
+  //LES AFFICHER SUR L'ECRAN VIA UN MAP
+  const kidsItem = props.kidList.map((kidItem, i) => {
     return (
       <TouchableOpacity
         key={i}
         style={styles.card}
         onPress={() => {
-          isActiveToggle();
-          /* setIsSelected(i); */
+          isActiveToggle(i);
         }}>
         <Button
           buttonStyle={{
@@ -251,14 +246,14 @@ function mapDispatchToProps(dispatch) {
     deleteAKid: function (kidId) {
       dispatch({ type: "deleteKid", kidId });
     },
-    updateAKid: function (kid) {
-      dispatch({ type: "updateKid", kid });
+    activeAKid: function (item) {
+      dispatch({ type: "activeKid", item });
     },
   };
 }
 
 function mapStateToProps(state) {
-  return { user: state.user, kidListFromReducer: state.kidList };
+  return { user: state.user, kidList: state.kidList };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
