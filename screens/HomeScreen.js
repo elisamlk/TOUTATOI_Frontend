@@ -1,110 +1,139 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Header, Card, Button, Overlay, Input } from "react-native-elements";
+import { Text } from "@rneui/themed";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { connect } from "react-redux";
+import { createPortal } from "react-dom";
 
-export default function HomeScreen(props) {
-  //OVERLAY ADDKID-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-  const [isVisible, setIsVisible] = useState(false);
-  const [kidName, setKidName] = useState("");
-  const [kidGrade, setKidGrade] = useState("");
+function HomeScreen(props) {
+  const [isVisible, setIsVisible] = useState(false); //AFFICHAGE DE L'OVERLAY
+  const [kidName, setKidName] = useState(""); //INPUT OVERLAY PRENOM DE L'ENFANT
+  const [kidGrade, setKidGrade] = useState(""); //INPUT OVERLAY CLASSE DE L'ENFANT
+  const [isSelected, setIsSelected] = useState(0); //GERE LE DISABLING DES ITEMS 'ENFANT'
 
+  //AJOUTER UN ENFANT A LA BASE DE DONNEES PUIS AU REDUCER-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   var handleAddKid = async () => {
-    await fetch("http://172.20.10.6:3000/kids/addKid", {
-      //=> BIEN MODIFIER L'ADRESSE IP
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `userIdFromFront=${props.userId}&firstNameFromFront=${kidName}&gradeFromFront=${kidGrade}`, // A MODIFIER AVEC L'INFO USERID VIA REDUX. INFOS ADDITIONNELLES??
-    });
-    //push le nouveau Kid dans le reducer
+    let data = await fetch(
+      "http://192.168.10.142:3000/kids/addKid", //attention a bien remettre heroku
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `userIdFromFront=${props.user}&firstNameFromFront=${kidName}&gradeFromFront=${kidGrade}`,
+      }
+    );
+    let response = await data.json();
+    let sendKid = {
+      kidId: response.kidId,
+      kidFirstName: kidName,
+      isActive: false,
+    };
+    props.addAKid(sendKid);
     setIsVisible(false);
     setKidGrade();
     setKidName();
   };
 
-  //RECUPERER LES ENFANTS DE L'USERID -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-  const [kidList, setKidList] = useState([]); //remplacer cela par un envoi dans le reducer
-  /*   useEffect(() => {
+  //RECUPERER LES ENFANTS DE L'USERID DEPUIS LA BDD -_-_-_LES ENVOYER AU REDUCER
+  useEffect(() => {
     const getKid = async () => {
-      const data = await fetch(
-        `http://172.20.10.6:3000/getKidsByUserId/${userId}` =>ATTENTION A BIEN MODIFIER L'ADRESSE HTTP(+USERID REDUX?)
+      let data = await fetch(
+        `http://192.168.10.142:3000/kids/getKidsByUserId?userIdFromFront=${props.user}` //attention a bien remettre heroku
       );
-      const body = await data.json();
-      console.log(body.adminKidList);
-      setKidList(body.adminKidList);
+      let response = await data.json();
+      let firstIsActive = false;
+      var kidListFromDB = response.adminKidList.map((e, i) => {
+        if (i === 0) {
+          firstIsActive = true;
+        } else {
+          firstIsActive = false;
+        }
+        return {
+          kidId: e._id,
+          kidFirstName: e.firstName,
+          isActive: firstIsActive,
+        };
+      });
+      props.submitKidList(kidListFromDB);
     };
     getKid();
-  }, []); */
+  }, []);
 
-  //LES SUPPRIMER
-  var deleteKid = async (kidIdFromFront) => {
-    await fetch(`/deleteKid/${kidIdFromFront}`, {
-      method: "DELETE",
-    });
+  //LES SUPPRIMER _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ ROUTE QUASIMENT PRETE SAUF QU'ELLE NE SEMBLE PAS SUPPRIMER LE BON ENFANT...
+  /*   var deleteKid = async (kid) => {
+    await fetch(
+      `https://sheltered-tor-38149.herokuapp.com/kids/deleteKid/${kid.kidId}`, 
+      {
+        method: "DELETE",
+      }
+    );
+  }; */
+
+  //SELECTIONNER -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+  let isActiveToggle = (i) => {
+    setIsSelected(i);
+    props.activeAKid(i);
   };
 
-  //LES AJOUTER -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-  const kids = ["JOSEPHINE", "BAPTISTE"]; //variable à remplacer par information venue du backend (hook kidList)
-  const kidsItem = kids.map((kidName, i) => {
-    let isKidDisabled;
-    if (i > 0) {
-      isKidDisabled = true;
-    } else if (i === 0) {
-      isKidDisabled = false;
-    }
+  //LES AFFICHER SUR L'ECRAN VIA UN MAP
+  const kidsItem = props.kidList.map((kidItem, i) => {
     return (
-      <Card key={i}>
-        <View style={styles.card}>
-          <Button
-            buttonStyle={{
-              height: 50,
-              width: 50,
-              borderRadius: 50,
-              backgroundColor: "#FABE6D",
-            }}
-            icon={
-              <FontAwesome5 name="user-astronaut" size={24} color="white" />
-            }
-            disabled={isKidDisabled} //onpress : toggleDisabled (3 infos dans ma kidlist redux : id, name, disabled)
-            disabledStyle={{ backgroundColor: "grey" }}
-          />
-          <Card.Title
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              paddingTop: 15,
-              paddingHorizontal: 10,
-            }}>
-            {kidName} {/* kidName.firstName (???? à verif)*/}
-          </Card.Title>
-          <Button
-            buttonStyle={{
-              height: 30,
-              width: 30,
-              borderRadius: 50,
-              backgroundColor: "#FABE6D",
-            }}
-            containerStyle={{ paddingTop: 12 }}
-            icon={<FontAwesome5 name="trash" size={12} color="white" />}
-            disabled={isKidDisabled}
-            disabledStyle={{ backgroundColor: "grey" }}
-            onPress={() => deleteKid(kidName.Id)} //kidNameId???? à vérif
-          />
-          <Button
-            buttonStyle={{
-              height: 30,
-              width: 30,
-              borderRadius: 50,
-              backgroundColor: "#FABE6D",
-            }}
-            containerStyle={{ paddingTop: 12, paddingLeft: 1 }}
-            icon={<FontAwesome5 name="plus-square" size={16} color="white" />}
-            disabled={isKidDisabled}
-            disabledStyle={{ backgroundColor: "grey" }}
-            // onPress={() =>} pas de route
-          />
-        </View>
-      </Card>
+      <TouchableOpacity
+        key={i}
+        style={styles.card}
+        onPress={() => {
+          isActiveToggle(i);
+        }}>
+        <Button
+          buttonStyle={{
+            height: 50,
+            width: 50,
+            borderRadius: 50,
+            backgroundColor: "#FABE6D",
+          }}
+          icon={<FontAwesome5 name="user-astronaut" size={24} color="white" />}
+          disabled={isSelected !== i ? true : false}
+          disabledStyle={{ backgroundColor: "grey" }}
+        />
+        <Card.Title
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            paddingTop: 15,
+            paddingHorizontal: 10,
+          }}>
+          {kidItem.kidFirstName + " " + kidItem.isActive}
+        </Card.Title>
+        <Button
+          buttonStyle={{
+            height: 30,
+            width: 30,
+            borderRadius: 50,
+            backgroundColor: "#FABE6D",
+          }}
+          containerStyle={{ paddingTop: 12 }}
+          icon={<FontAwesome5 name="trash" size={12} color="white" />}
+          disabled={isSelected !== i ? true : false}
+          disabledStyle={{ backgroundColor: "grey" }}
+          onPress={() => {
+            /* deleteKid(kidItem); */
+            props.deleteAKid(kidItem.kidId);
+          }}
+        />
+        <Button
+          buttonStyle={{
+            height: 30,
+            width: 30,
+            borderRadius: 50,
+            backgroundColor: "#FABE6D",
+          }}
+          containerStyle={{ paddingTop: 12, paddingLeft: 1 }}
+          icon={<FontAwesome5 name="plus-square" size={16} color="white" />}
+          disabled={isSelected !== i ? true : false}
+          disabledStyle={{ backgroundColor: "grey" }}
+          // onPress={() =>} pas de route+pas compris dernier truc a faire de ma route
+        />
+      </TouchableOpacity>
     );
   });
 
@@ -124,7 +153,7 @@ export default function HomeScreen(props) {
         }}
       />
       <Overlay
-        overlayStyle={{ width: 300 }}
+        overlayStyle={{ width: 280, borderRadius: 15 }}
         isVisible={isVisible}
         onBackdropPress={() => {
           setIsVisible(false);
@@ -140,30 +169,38 @@ export default function HomeScreen(props) {
             placeholder="En quelle classe est-il ?"
             onChangeText={(val) => setKidGrade(val)}
           />
-
           <Button
             title="Ajoutez l'enfant"
-            buttonStyle={{ backgroundColor: "#eb4d4b" }}
+            buttonStyle={{ backgroundColor: "#FFC9B9" }}
             onPress={() => handleAddKid()}
             type="solid"
           />
         </View>
       </Overlay>
-      <View style={styles.container}>{kidsItem}</View>
-      <View>
-        <Button
-          containerStyle={{ marginTop: 60 }}
-          title="Ajouter un nouvel enfant"
-          buttonStyle={{
-            borderRadius: 25,
-            backgroundColor: "#FFC9B9",
-          }}
-          containerViewStyle={{ width: "100%", marginLeft: 0 }}
-          onPress={() => {
-            setIsVisible(true);
-          }}
-        />
-      </View>
+      <ScrollView style={{ width: "100%", paddingHorizontal: 20 }}>
+        {kidsItem}
+        <View style={styles.container}>
+          <TouchableOpacity
+            style={{
+              borderRadius: 15,
+              shadowOffset: { width: 5, height: 5 },
+              shadowOpacity: 1,
+              shadowRadius: 8,
+              elevation: 8,
+              backgroundColor: "#FFC9B9",
+              marginTop: 60,
+              marginBottom: 100,
+            }}>
+            <Text
+              onPress={() => {
+                setIsVisible(true);
+              }}
+              style={{ margin: 10, color: "grey", justifyContent: "center" }}>
+              Ajouter un nouvel enfant
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -181,6 +218,42 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    width: 225,
+    alignItems: "center",
+    height: 75,
+    backgroundColor: "white",
+    borderRadius: 15,
+    shadowOffset: { width: 5, height: 5 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 8,
+    paddingLeft: 16,
+    paddingRight: 14,
+    marginTop: 15,
+    marginBottom: 20,
+    marginLeft: 16,
+    marginRight: 16,
   },
 });
+
+function mapDispatchToProps(dispatch) {
+  return {
+    addAKid: function (kid) {
+      dispatch({ type: "addKid", kid });
+    },
+    submitKidList: function (kidList) {
+      dispatch({ type: "submitKidList", kidList });
+    },
+    deleteAKid: function (kidId) {
+      dispatch({ type: "deleteKid", kidId });
+    },
+    activeAKid: function (item) {
+      dispatch({ type: "activeKid", item });
+    },
+  };
+}
+
+function mapStateToProps(state) {
+  return { user: state.user, kidList: state.kidList };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
