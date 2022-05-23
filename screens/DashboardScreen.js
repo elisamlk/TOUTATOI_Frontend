@@ -26,17 +26,60 @@ import monjson from "../jsonModels/url.json";
 
 const Personnalisation = (props) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+  // const [isEnabled, setIsEnabled] = useState(false);
+
   const [allNotionsList, setAllNotionsList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
-  const [kidActivatedNotions, setKidActivatedNotions] = useState([]);
+  // const [kidActivatedNotions, setKidActivatedNotions] = useState([]);
   const [allNotionsResponse, setAllNotionsResponse] = useState(false);
   const [kidNotionsResponse, setKidNotionsResponse] = useState(false);
   const [activeKid, setActiveKid] = useState(
     props.kidList.find((e) => e.isActive == true)
   );
-  //console.log("récupération depuis le store", props.kidList[0].kidId);
+  const [openSubCategory, setOpenSubCategory] = useState("");
+  const [notionList, setNotionList] = useState(null);
+  const [openNotionList, setOpenNotionList] = useState([]);
+
+  const toggleSwitch = (notionid) => {
+    console.log("toggle");
+    if (props.kidActivatedNotionList.some((e) => notionid == e.notionId)) {
+      props.deactivateNotion(notionid);
+    } else props.activateNotion({ notionId: notionid });
+  };
+
+  const OpenSubcategory = (item) => {
+    console.log("item, ", item);
+
+    setIsVisible(true);
+    setOpenSubCategory(item);
+    setOpenNotionList(allNotionsList.filter((e) => e.subCategory == item));
+  };
+
+  var notionsToDisplay = openNotionList.map((notion, f) => {
+    // console.log(
+    //   "la notion ",
+    //   notion._id,
+    //   "est activée ",
+    //   props.kidActivatedNotionList[0].notionId
+    // );
+
+    let bool = props.kidActivatedNotionList.some(
+      (e) => notion._id == e.notionId
+    );
+
+    return (
+      <View key={f} style={styles.notionName}>
+        <Text style={styles.notionText}>{notion.notionName}</Text>
+        <Switch
+          trackColor={{ false: "#767577", true: "#9CC5A1" }}
+          thumbColor={bool ? "#FFC9B9" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onChange={() => toggleSwitch(notion._id)}
+          value={bool}
+        />
+      </View>
+    );
+  });
 
   // Récupérer toutes les notions en BDD
   useEffect(() => {
@@ -44,11 +87,10 @@ const Personnalisation = (props) => {
       var rawResponse = await fetch(`${monjson.url}/kids/getAllNotionsFromBdd`);
       var response = await rawResponse.json();
 
-      console.log("9", response.allNotions);
       let array = [];
       for (let element of response.allNotions) {
         let item = array.find((e) => e.category === element.category);
-        console.log("item=>", item);
+
         if (!item) {
           array.push({
             category: element.category,
@@ -61,24 +103,25 @@ const Personnalisation = (props) => {
         }
       }
 
-      console.log("array =>", array);
       setCategoryList(array);
       setAllNotionsList(response.allNotions);
       setAllNotionsResponse(true);
     }
     getAllNotions();
   }, []);
-  //console.log("2", allNotionsList);
 
   // Récupérer les notions actives du kid actif à partir de l'Id du reducer
   useEffect(() => {
     async function getKidActivatedNotions() {
       var rawResponse = await fetch(
-        `${monjson.url}/kids/getKidActivatedNotions?kidIdFromFront=${activeKid.kidId}`
+        `${monjson.url}/kids/byId/${activeKid.kidId}`
       );
       var response = await rawResponse.json();
-      //console.log("kidActivatedNotions", response);
-      setKidActivatedNotions(response);
+
+      if (response) {
+        props.initiateNotionList(response.kid.activatedNotions);
+      }
+
       setKidNotionsResponse(true);
     }
 
@@ -96,7 +139,12 @@ const Personnalisation = (props) => {
   var categoryCardList = categoryList.map((data, i) => {
     var subCategory = data.subCategoryList.map((item, j) => {
       return (
-        <TouchableOpacity key={j} onPress={() => setIsVisible(true)}>
+        <TouchableOpacity
+          key={j}
+          onPress={() => {
+            OpenSubcategory(item);
+          }}
+        >
           <Text style={styles.button}>{item}</Text>
         </TouchableOpacity>
       );
@@ -104,47 +152,19 @@ const Personnalisation = (props) => {
     return (
       <View key={i} style={styles.card}>
         <Card.Title style={styles.title}>{data.category}</Card.Title>
-        <View style={styles.buttonDisplay}>
-          {subCategory}
-          {/* <Overlay
-            style={styles.overlay}
-            isVisible={isVisible}
-            onBackdropPress={() => {
-              setIsVisible(false);
-            }}
-          >
-            <View style={styles.notionNameDisplay}>
-              <View style={styles.notionName}>
-                <Text style={styles.notionText}>Pluriel en X</Text>
-                <Switch
-                  trackColor={{ false: "#767577", true: "#9CC5A1" }}
-                  thumbColor={isEnabled ? "#FFC9B9" : "#f4f3f4"}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch}
-                  value={isEnabled}
-                />
-              </View>
-              <View style={styles.notionName}>
-                <Text style={styles.notionText}>a/à</Text>
-                <Switch
-                  trackColor={{ false: "#767577", true: "#9CC5A1" }}
-                  thumbColor={isEnabled ? "#FFC9B9" : "#f4f3f4"}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch}
-                  value={isEnabled}
-                />
-              </View>
-              <View style={styles.notionButtonDisplay}>
-                <TouchableOpacity style={styles.notionButtonContainer}>
-                  <Text style={styles.notionButton}>Valider</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.notionButtonContainer}>
-                  <Text style={styles.notionButton}>Annuler</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Overlay> */}
-        </View>
+        <View style={styles.buttonDisplay}>{subCategory}</View>
+        <Overlay
+          style={styles.overlay}
+          isVisible={isVisible}
+          onBackdropPress={() => {
+            setIsVisible(false);
+          }}
+        >
+          <View>
+            <Text>{openSubCategory}</Text>
+          </View>
+          <View style={styles.notionNameDisplay}>{notionsToDisplay}</View>
+        </Overlay>
       </View>
     );
   });
@@ -252,10 +272,15 @@ const Stats = (props) => {
 const initialLayout = { width: Dimensions.get("window").width };
 
 // Connection de personnalisation et stats au store
-export const ConnectedPersonnalisation =
-  connect(mapStateToProps)(Personnalisation);
+export const ConnectedPersonnalisation = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Personnalisation);
 
-export const ConnectedStats = connect(mapStateToProps)(Stats);
+export const ConnectedStats = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Stats);
 const renderScene = SceneMap({
   first: ConnectedPersonnalisation,
   second: ConnectedStats,
@@ -371,10 +396,31 @@ const styles = StyleSheet.create({
       stroke: "#ffa726",
     },
   },
+  overlay: {
+    width: 200,
+    height: 500,
+  },
 });
 
-function mapStateToProps(state) {
-  return { kidList: state.kidList };
+function mapDispatchToProps(dispatch) {
+  return {
+    activateNotion: function (notion) {
+      dispatch({ type: "activateNotion", notion });
+    },
+    deactivateNotion: function (notion) {
+      dispatch({ type: "deactivateNotion", notion });
+    },
+    initiateNotionList: function (list) {
+      dispatch({ type: "submitActivatedNotionList", list });
+    },
+  };
 }
 
-export default connect(mapStateToProps, null)(DashboardScreen);
+function mapStateToProps(state) {
+  return {
+    kidList: state.kidList,
+    kidActivatedNotionList: state.kidActivatedNotionList,
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardScreen);
