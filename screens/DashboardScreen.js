@@ -6,6 +6,7 @@ import {
   StatusBar,
   ScrollView,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Switch,
 } from "react-native";
 import {
@@ -18,9 +19,10 @@ import {
 } from "react-native-chart-kit";
 import { Text, Card } from "@rneui/themed";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { Overlay, Badge } from "react-native-elements";
+import { Overlay, Badge, ListItem } from "react-native-elements";
 import { connect } from "react-redux";
 import monjson from "../jsonModels/url.json";
+import { ListItemTitle } from "@rneui/base/dist/ListItem/ListItem.Title";
 
 // Onglet personnalisation des notions
 
@@ -159,6 +161,27 @@ const Personnalisation = (props) => {
           <Text style={styles.fonts} h5>
             Aidez nous à personnaliser le programme de votre enfant !
           </Text>
+          <TouchableWithoutFeedback>
+            <ListItem>
+              <ListItemContent>
+                <ListItemTitle>Tortue</ListItemTitle>
+              </ListItemContent>
+            </ListItem>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback>
+            <ListItem>
+              <ListItemContent>
+                <ListItemTitle>Maison</ListItemTitle>
+              </ListItemContent>
+            </ListItem>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback>
+            <ListItem>
+              <ListItemContent>
+                <ListItemTitle>Chat</ListItemTitle>
+              </ListItemContent>
+            </ListItem>
+          </TouchableWithoutFeedback>
           {categoryCardList}
         </View>
       </ScrollView>
