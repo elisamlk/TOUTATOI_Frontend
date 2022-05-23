@@ -31,9 +31,6 @@ function ConfirmationCodeScreen(props) {
       if (props.firstKid.name) {
         console.log("il y a un enfant dans le reducer");
         if (verifyCodeResult.result) {
-          let userData = { userId: props.activeUser, code: confCodeFromFront };
-          AsyncStorage.setItem("code", JSON.stringify(userData));
-          console.log("userData:", userData);
           let createKidResponse = await fetch(
             "https://sheltered-tor-38149.herokuapp.com/kids/addKid",
             {
@@ -50,6 +47,7 @@ function ConfirmationCodeScreen(props) {
           );
 
           if (createKidResult.result) {
+            AsyncStorage.setItem("code", confCodeFromFront);
             props.navigation.navigate("BottomNavigator");
           } else {
             console.log(
@@ -61,6 +59,7 @@ function ConfirmationCodeScreen(props) {
       } else {
         if (verifyCodeResult.result) {
           console.log("il n'y a pas d'enfant dans le reducer");
+          AsyncStorage.setItem("code", confCodeFromFront);
           props.navigation.navigate("BottomNavigator");
         } else {
           console.log("le code n'est pas bon, pas de redirection");

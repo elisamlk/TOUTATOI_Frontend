@@ -17,9 +17,15 @@ function AccueilScreen(props) {
   useEffect(() => {
     AsyncStorage.getItem("code", function (error, userData) {
       if (userData) {
-        let parsedUserData = JSON.parse(userData);
-        props.activeUser(parsedUserData.userId);
-        props.navigation.navigate("BottomNavigator");
+        const getUser = async () => {
+          let data = await fetch(
+            `http://192.168.10.150:3000/users/getUserByCode?codeFromFront=${userData}` //attention a bien remettre heroku
+          );
+          let response = await data.json();
+          props.activeUser(response.userId);
+          props.navigation.navigate("BottomNavigator");
+        };
+        getUser();
       }
     });
   }, []);
