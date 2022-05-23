@@ -1,4 +1,4 @@
-export default function (firstKid = { name: "", grade: "" }, action) {
+export default function (firstKid = { name: "Nicolas", grade: "CP" }, action) {
   if (action.type == "addFirstKid") {
     return { name: action.name, grade: action.grade };
   } else {
