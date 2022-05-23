@@ -20,13 +20,21 @@ import kidList from "./reducers/kidList";
 import answerList from "./reducers/answerList";
 import firstKid from "./reducers/firstKid";
 import user from "./reducers/user";
+import kidActivatedNotionList from "./reducers/kidActivatedNotionList";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const store = createStore(
-  combineReducers({ activeUser, kidList, firstKid, answerList, user })
+  combineReducers({
+    activeUser,
+    kidList,
+    firstKid,
+    answerList,
+    user,
+    kidActivatedNotionList,
+  })
 );
 
 const BottomNavigator = () => {
