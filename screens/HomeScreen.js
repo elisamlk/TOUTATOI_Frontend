@@ -259,7 +259,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mapStateToProps(state) {
-  return { user: state.user, kidList: state.kidList };
+  return { user: state.activeUser, kidList: state.kidList };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

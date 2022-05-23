@@ -8,9 +8,17 @@ import {
   TouchableOpacity,
   Switch,
 } from "react-native";
+import {
+  LineChart,
+  BarChart,
+  PieChart,
+  ProgressChart,
+  ContributionGraph,
+  StackedBarChart,
+} from "react-native-chart-kit";
 import { Text, Card } from "@rneui/themed";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { Overlay } from "react-native-elements";
+import { Overlay, Badge } from "react-native-elements";
 import { connect } from "react-redux";
 import monjson from "../jsonModels/url.json";
 
@@ -160,20 +168,86 @@ const Personnalisation = (props) => {
 
 // Onglet Statistiques
 
-const Stats = () => (
-  <View style={[styles.scene, { backgroundColor: "white" }]}>
-    <ScrollView>
-      <View style={styles.container}>
-        <Text style={styles.fonts} h4>
-          Cockpit de Gabrielle
-        </Text>
-        <Text style={styles.fonts} h5>
-          Suivez les progrès de votre enfant
-        </Text>
+const Stats = (props) => {
+  const screenWidth = Dimensions.get("window").width;
+  const [activeKid, setActiveKid] = useState(
+    props.kidList.find((e) => e.isActive == true)
+  );
+  const [kidXp, setKidXp] = useState([]);
+  const [kidConsecutiveDaysNb, setKidConsecutiveDaysNb] = useState(Number);
+  const [kidStatsResponse, setKidStatsResponse] = useState(false);
+
+  useEffect(() => {
+    async function getKidStats() {
+      var rawResponse = await fetch(
+        `${monjson.url}/kids/byID/628b4f275680bb4b9b682618`
+      );
+      var response = await rawResponse.json();
+      console.log("kid =>", response.kid);
+      console.log("kid.xp =>", response.kid.xp);
+      console.log("kid.consecutiveDaysNb", response.kid.consecutiveDaysNb);
+      setKidXp(response.kid.xp);
+      setKidConsecutiveDaysNb(response.kid.consecutiveDaysNb);
+      setKidStatsResponse(true);
+    }
+    getKidStats();
+  }, []);
+
+  let graphLabels = [];
+  let graphValues = [];
+  for (let element of kidXp) {
+    graphLabels.push(element.date);
+    graphValues.push(element.xpNb);
+  }
+  console.log("labels =>", graphLabels);
+  console.log("values =>", graphValues);
+
+  const data = {
+    datasets: [
+      {
+        data: graphValues,
+        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+        strokeWidth: 2, // optional
+      },
+    ],
+    legend: ["Rainy Days"], // optional
+  };
+
+  if (!kidStatsResponse) {
+    return (
+      <View>
+        <Text>Chargement...</Text>
       </View>
-    </ScrollView>
-  </View>
-);
+    );
+  } else
+    return (
+      <View style={[styles.scene, { backgroundColor: "white" }]}>
+        <ScrollView>
+          <View style={styles.container}>
+            <Text style={styles.fonts} h4>
+              Cockpit de {activeKid.kidFirstName}
+            </Text>
+            <Text style={styles.fonts} h5>
+              Suivez les progrès de votre enfant
+            </Text>
+            <Text style={styles.fonts} h5>
+              Niveau d'xp:
+            </Text>
+            <BarChart
+              data={data}
+              width={screenWidth}
+              height={220}
+              chartConfig={styles.chartConfig}
+            />
+            <Text style={styles.fonts} h5>
+              Nombre de jours consécutifs:
+            </Text>
+            <Badge value={kidConsecutiveDaysNb} />
+          </View>
+        </ScrollView>
+      </View>
+    );
+};
 
 const initialLayout = { width: Dimensions.get("window").width };
 
@@ -280,6 +354,22 @@ const styles = StyleSheet.create({
     padding: 8,
     marginLeft: 10,
     marginTop: 30,
+  },
+  chartConfig: {
+    backgroundColor: "#e26a00",
+    backgroundGradientFrom: "#fb8c00",
+    backgroundGradientTo: "#ffa726",
+    decimalPlaces: 2, // optional, defaults to 2dp
+    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: "6",
+      strokeWidth: "2",
+      stroke: "#ffa726",
+    },
   },
 });
 
