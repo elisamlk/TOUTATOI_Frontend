@@ -25,7 +25,7 @@ import { createStore, combineReducers } from "redux";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const store = createStore(
-  combineReducers({ activeUser, kidList, firstKid, answerList, user })
+  combineReducers({ activeUser, kidList, firstKid, answerList })
 );
 
 const BottomNavigator = () => {

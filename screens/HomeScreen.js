@@ -17,14 +17,11 @@ function HomeScreen(props) {
 
   //AJOUTER UN ENFANT A LA BASE DE DONNEES PUIS AU REDUCER-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   var handleAddKid = async () => {
-    let data = await fetch(
-      `${monjson.url}/kids/addKid`
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `userIdFromFront=${props.user}&firstNameFromFront=${kidName}&gradeFromFront=${kidGrade}`,
-      }
-    );
+    let data = await fetch(`${monjson.url}/kids/addKid`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `userIdFromFront=${props.user}&firstNameFromFront=${kidName}&gradeFromFront=${kidGrade}`,
+    });
     let response = await data.json();
     let sendKid = {
       kidId: response.kidId,
@@ -86,8 +83,7 @@ function HomeScreen(props) {
         style={styles.card}
         onPress={() => {
           isActiveToggle(i);
-        }}
-      >
+        }}>
         <Button
           buttonStyle={{
             height: 50,
@@ -161,8 +157,7 @@ function HomeScreen(props) {
         isVisible={isVisible}
         onBackdropPress={() => {
           setIsVisible(false);
-        }}
-      >
+        }}>
         <View>
           <Input
             containerStyle={{ marginBottom: 25 }}
@@ -199,8 +194,7 @@ function HomeScreen(props) {
               onPress={() => {
                 setIsVisible(true);
               }}
-              style={{ margin: 10, color: "grey", justifyContent: "center" }}
-            >
+              style={{ margin: 10, color: "grey", justifyContent: "center" }}>
               Ajouter un nouvel enfant
             </Text>
           </TouchableOpacity>
