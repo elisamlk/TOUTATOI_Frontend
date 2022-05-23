@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Input } from "react-native-elements";
 import { connect } from "react-redux";
 import monjson from "../jsonModels/url.json";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function ConfirmationCodeScreen(props) {
   const [confCodeFromFront, setConfCodeFromFront] = useState("");
@@ -44,6 +45,7 @@ function ConfirmationCodeScreen(props) {
           );
 
           if (createKidResult.result) {
+            AsyncStorage.setItem("code", confCodeFromFront);
             props.navigation.navigate("BottomNavigator");
           } else {
             console.log(
@@ -55,9 +57,10 @@ function ConfirmationCodeScreen(props) {
       } else {
         if (verifyCodeResult.result) {
           console.log("il n'y a pas d'enfant dans le reducer");
+          AsyncStorage.setItem("code", confCodeFromFront);
           props.navigation.navigate("BottomNavigator");
         } else {
-          console.log("Le n'est pas bon, pas de redirection");
+          console.log("le code n'est pas bon, pas de redirection");
         }
       }
     }

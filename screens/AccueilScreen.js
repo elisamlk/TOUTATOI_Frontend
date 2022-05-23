@@ -1,29 +1,57 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { connect } from "react-redux";
 
-export default function AccueilScreen(props) {
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
+import monjson from "../jsonModels/url.json";
+
+function AccueilScreen(props) {
+  useEffect(() => {
+    AsyncStorage.getItem("code", function (error, userData) {
+      if (userData) {
+        const getUser = async () => {
+          let data = await fetch(
+            `http://192.168.10.150:3000/users/getUserByCode?codeFromFront=${userData}` //attention a bien remettre heroku
+          );
+          let response = await data.json();
+          props.activeUser(response.userId);
+          props.navigation.navigate("BottomNavigator");
+        };
+        getUser();
+      }
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.h1}>Bienvenue sur</Text>
       <Image source={require("../assets/logoTest.png")}></Image>
       <View style={styles.buttonDisplay}>
         <TouchableOpacity
-          style={styles.button2}
-          onPress={() => props.navigation.navigate("KidProfil")}
-        >
-          <Text style={styles.fonts}>C'est parti !</Text>
+          style={styles.button1}
+          onPress={() => props.navigation.navigate("KidProfil")}>
+          <Text style={styles.fonts} flex-start>
+            C'est parti !
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.button1}
-          onPress={() => props.navigation.navigate("SignIn")}
-        >
+          style={styles.button2}
+          onPress={() => props.navigation.navigate("SignIn")}>
           <Text style={styles.fonts}>J'ai un compte</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button1}
-          onPress={() => props.navigation.navigate("SignIn")}
-        >
+          style={styles.button2}
+          onPress={() => props.navigation.navigate("SignIn")}>
           <Text style={styles.fonts}>Je suis invité</Text>
         </TouchableOpacity>
       </View>
