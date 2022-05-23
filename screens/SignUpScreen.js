@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Input } from "react-native-elements";
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
+import monjson from "../jsonModels/url.json";
 
 function SignUpScreen(props) {
   const [email, setEmail] = useState("");
@@ -19,14 +20,11 @@ function SignUpScreen(props) {
     // console.log("SIGN UP isEmailValid =>", isEmailValid);
 
     if (isEmailValid) {
-      let response = await fetch(
-        "http://192.168.10.162:3000/users/submitMail",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `mailFromFront=${email}&isNew=true`,
-        }
-      );
+      let response = await fetch(`${monjson.url}/users/submitMail`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `mailFromFront=${email}&isNew=true`,
+      });
       let result = await response.json();
 
       console.log("userId récupérée du backend =>", result.userId);

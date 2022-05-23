@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Input } from "react-native-elements";
 import { connect } from "react-redux";
+import monjson from "../jsonModels/url.json";
 
 function ConfirmationCodeScreen(props) {
   const [confCodeFromFront, setConfCodeFromFront] = useState("");
@@ -13,7 +14,7 @@ function ConfirmationCodeScreen(props) {
 
     if (confCodeFromFront) {
       let verifyCodeResponse = await fetch(
-        "http://192.168.10.162:3000/users/submitConfirmationCode",
+        `${monjson.url}/users/submitConfirmationCode`,
         {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -30,14 +31,11 @@ function ConfirmationCodeScreen(props) {
       if (props.firstKid.name) {
         console.log("il y a un enfant dans le reducer");
         if (verifyCodeResult.result) {
-          let createKidResponse = await fetch(
-            "http://192.168.10.162:3000/kids/addKid",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/x-www-form-urlencoded" },
-              body: `userIdFromFront=${props.activeUser}&firstNameFromFront=${props.firstKid.name}&gradeFromFront=${props.firstKid.grade}`,
-            }
-          );
+          let createKidResponse = await fetch(`${monjson.url}/kids/addKid`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `userIdFromFront=${props.activeUser}&firstNameFromFront=${props.firstKid.name}&gradeFromFront=${props.firstKid.grade}`,
+          });
 
           let createKidResult = await createKidResponse.json();
           console.log(

@@ -1,13 +1,4 @@
-export default function (
-  kidList = [
-    {
-      kidId: "62875e64984ccb187d32afc1",
-      kidFirstName: "Carlotta",
-      isActive: true,
-    },
-  ],
-  action
-) {
+export default function (kidList = [], action) {
   if (action.type == "submitKidList") {
     return action.kidList;
   } else if (action.type == "addKid") {

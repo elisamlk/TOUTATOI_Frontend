@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { connect } from "react-redux";
 import { Header, Card, Button, Overlay, Input } from "react-native-elements";
+import monjson from "../jsonModels/url.json";
 
 function ChallengeScreen(props) {
   const [challenge, setChallenge] = useState({});
@@ -14,16 +15,11 @@ function ChallengeScreen(props) {
   const [challengeResponse, setChallengeResponse] = useState(false);
   const [pushResultsResponse, setPushResultsResponse] = useState(false);
 
-  let url = "http://192.168.10.162:3000";
-  let urlLaura = "http://192.168.10.162:3000";
-  let urllocal = "http://192.168.10.119:3000";
-  let urlheroku = "https://sheltered-tor-38149.herokuapp.com";
-
   useEffect(() => {
     setActiveKid(props.kidList.find((e) => e.isActive == true));
     async function getChallenge() {
       var rawResponse = await fetch(
-        `${url}/getChallengeOfTheDay?kidIdFromFront=${activeKid.kidId}`
+        `${monjson.url}/getChallengeOfTheDay?kidIdFromFront=${activeKid.kidId}`
       );
       var response = await rawResponse.json();
       console.log("responsedufetch ", response);
@@ -105,7 +101,7 @@ function ChallengeScreen(props) {
         onPress={() => {
           async function pushResults() {
             console.log("liste results ", props.answerList);
-            var rawResponse = await fetch(`${url}/resultsOfTheDay`, {
+            var rawResponse = await fetch(`${monjson.url}/resultsOfTheDay`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/x-www-form-urlencoded",

@@ -10,6 +10,7 @@ import {
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+import monjson from "../jsonModels/url.json";
 
 export default function AccueilScreen(props) {
   return (

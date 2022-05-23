@@ -5,6 +5,7 @@ import { Text } from "@rneui/themed";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { createPortal } from "react-dom";
+import monjson from "../jsonModels/url.json";
 
 function HomeScreen(props) {
   const [isVisible, setIsVisible] = useState(false); //AFFICHAGE DE L'OVERLAY
@@ -15,7 +16,7 @@ function HomeScreen(props) {
   //AJOUTER UN ENFANT A LA BASE DE DONNEES PUIS AU REDUCER-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   var handleAddKid = async () => {
     let data = await fetch(
-      "http://192.168.10.142:3000/kids/addKid", //attention a bien remettre heroku
+      `${monjson.url}/kids/addKid`, //attention a bien remettre heroku
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -38,7 +39,7 @@ function HomeScreen(props) {
   useEffect(() => {
     const getKid = async () => {
       let data = await fetch(
-        `http://192.168.10.142:3000/kids/getKidsByUserId?userIdFromFront=${props.user}` //attention a bien remettre heroku
+        `${monjson.url}/kids/getKidsByUserId?userIdFromFront=${props.user}` //attention a bien remettre heroku
       );
       let response = await data.json();
       let firstIsActive = false;
@@ -62,7 +63,7 @@ function HomeScreen(props) {
   //LES SUPPRIMER _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ ROUTE QUASIMENT PRETE SAUF QU'ELLE NE SEMBLE PAS SUPPRIMER LE BON ENFANT...
   /*   var deleteKid = async (kid) => {
     await fetch(
-      `https://sheltered-tor-38149.herokuapp.com/kids/deleteKid/${kid.kidId}`, 
+      `${monjson.url}/kids/deleteKid/${kid.kidId}`, 
       {
         method: "DELETE",
       }
@@ -83,7 +84,8 @@ function HomeScreen(props) {
         style={styles.card}
         onPress={() => {
           isActiveToggle(i);
-        }}>
+        }}
+      >
         <Button
           buttonStyle={{
             height: 50,
@@ -101,7 +103,8 @@ function HomeScreen(props) {
             justifyContent: "center",
             paddingTop: 15,
             paddingHorizontal: 10,
-          }}>
+          }}
+        >
           {kidItem.kidFirstName + " " + kidItem.isActive}
         </Card.Title>
         <Button
@@ -157,7 +160,8 @@ function HomeScreen(props) {
         isVisible={isVisible}
         onBackdropPress={() => {
           setIsVisible(false);
-        }}>
+        }}
+      >
         <View>
           <Input
             containerStyle={{ marginBottom: 25 }}
@@ -190,12 +194,14 @@ function HomeScreen(props) {
               backgroundColor: "#FFC9B9",
               marginTop: 60,
               marginBottom: 100,
-            }}>
+            }}
+          >
             <Text
               onPress={() => {
                 setIsVisible(true);
               }}
-              style={{ margin: 10, color: "grey", justifyContent: "center" }}>
+              style={{ margin: 10, color: "grey", justifyContent: "center" }}
+            >
               Ajouter un nouvel enfant
             </Text>
           </TouchableOpacity>

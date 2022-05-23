@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Input } from "react-native-elements";
 import { connect } from "react-redux";
+import monjson from "../jsonModels/url.json";
 
 function KidProfilScreen(props) {
   const [name, setName] = useState("");
