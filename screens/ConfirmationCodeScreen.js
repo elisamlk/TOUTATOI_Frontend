@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Input } from "react-native-elements";
 import { connect } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function ConfirmationCodeScreen(props) {
   const [confCodeFromFront, setConfCodeFromFront] = useState("");
@@ -13,7 +14,7 @@ function ConfirmationCodeScreen(props) {
 
     if (confCodeFromFront) {
       let verifyCodeResponse = await fetch(
-        "http://192.168.10.162:3000/users/submitConfirmationCode",
+        "https://sheltered-tor-38149.herokuapp.com/users/submitConfirmationCode",
         {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -30,8 +31,11 @@ function ConfirmationCodeScreen(props) {
       if (props.firstKid.name) {
         console.log("il y a un enfant dans le reducer");
         if (verifyCodeResult.result) {
+          let userData = { userId: props.activeUser, code: confCodeFromFront };
+          AsyncStorage.setItem("code", JSON.stringify(userData));
+          console.log("userData:", userData);
           let createKidResponse = await fetch(
-            "http://192.168.10.162:3000/kids/addKid",
+            "https://sheltered-tor-38149.herokuapp.com/kids/addKid",
             {
               method: "POST",
               headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -59,7 +63,7 @@ function ConfirmationCodeScreen(props) {
           console.log("il n'y a pas d'enfant dans le reducer");
           props.navigation.navigate("BottomNavigator");
         } else {
-          console.log("Le n'est pas bon, pas de redirection");
+          console.log("le code n'est pas bon, pas de redirection");
         }
       }
     }

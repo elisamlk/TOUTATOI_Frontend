@@ -20,7 +20,7 @@ function SignUpScreen(props) {
 
     if (isEmailValid) {
       let response = await fetch(
-        "http://192.168.10.162:3000/users/submitMail",
+        "https://sheltered-tor-38149.herokuapp.com/users/submitMail",
         {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },

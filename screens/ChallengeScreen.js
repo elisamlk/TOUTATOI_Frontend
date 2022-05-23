@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { connect } from "react-redux";
-import { Header, Card, Button, Overlay, Input } from "react-native-elements";
+import { Header, Button } from "react-native-elements";
 
 function ChallengeScreen(props) {
   const [challenge, setChallenge] = useState({});
@@ -14,7 +14,7 @@ function ChallengeScreen(props) {
   const [challengeResponse, setChallengeResponse] = useState(false);
   const [pushResultsResponse, setPushResultsResponse] = useState(false);
 
-  let url = "http://192.168.10.162:3000";
+  let url = "http://192.168.10.150:3000";
   let urlLaura = "http://192.168.10.162:3000";
   let urllocal = "http://192.168.10.119:3000";
   let urlheroku = "https://sheltered-tor-38149.herokuapp.com";
@@ -81,8 +81,7 @@ function ChallengeScreen(props) {
       <Text
         onPress={() => {
           setAnswerVisible(!answerVisible);
-        }}
-      >
+        }}>
         {questionList[idQuestionToShow].answerLabel}
       </Text>
     );
@@ -137,8 +136,7 @@ function ChallengeScreen(props) {
             justifyContent: "center",
             flexDirection: "row",
             height: 200,
-          }}
-        >
+          }}>
           <Button
             title="Bonne réponse"
             onPress={() => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AccueilScreen from "./screens/AccueilScreen";
 import KidProfilScreen from "./screens/KidProfilScreen";
 import SignUpScreen from "./screens/SignUpScreen";
@@ -14,27 +14,20 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import activeUser from "./reducers/activeUser";
 import kidList from "./reducers/kidList";
-<<<<<<< HEAD
 import answerList from "./reducers/answerList";
 import firstKid from "./reducers/firstKid";
-=======
-import user from "./reducers/user";
->>>>>>> US8
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-<<<<<<< HEAD
 const store = createStore(
   combineReducers({ activeUser, kidList, firstKid, answerList })
 );
-=======
-const store = createStore(combineReducers({ kidList, user }));
->>>>>>> US8
 
 const BottomNavigator = () => {
   return (
@@ -82,7 +75,6 @@ export default function App() {
               name="ConfirmationCode"
               component={ConfirmationCodeScreen}
             />
-
             <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
