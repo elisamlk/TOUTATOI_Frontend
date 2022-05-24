@@ -26,60 +26,16 @@ import monjson from "../jsonModels/url.json";
 
 const Personnalisation = (props) => {
   const [isVisible, setIsVisible] = useState(false);
-  // const [isEnabled, setIsEnabled] = useState(false);
-
   const [allNotionsList, setAllNotionsList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
-  // const [kidActivatedNotions, setKidActivatedNotions] = useState([]);
   const [allNotionsResponse, setAllNotionsResponse] = useState(false);
   const [kidNotionsResponse, setKidNotionsResponse] = useState(false);
   const [activeKid, setActiveKid] = useState(
     props.kidList.find((e) => e.isActive == true)
   );
   const [openSubCategory, setOpenSubCategory] = useState("");
-  const [notionList, setNotionList] = useState(null);
   const [openNotionList, setOpenNotionList] = useState([]);
-
-  const toggleSwitch = (notionid) => {
-    console.log("toggle");
-    if (props.kidActivatedNotionList.some((e) => notionid == e.notionId)) {
-      props.deactivateNotion(notionid);
-    } else props.activateNotion({ notionId: notionid });
-  };
-
-  const OpenSubcategory = (item) => {
-    console.log("item, ", item);
-
-    setIsVisible(true);
-    setOpenSubCategory(item);
-    setOpenNotionList(allNotionsList.filter((e) => e.subCategory == item));
-  };
-
-  var notionsToDisplay = openNotionList.map((notion, f) => {
-    // console.log(
-    //   "la notion ",
-    //   notion._id,
-    //   "est activée ",
-    //   props.kidActivatedNotionList[0].notionId
-    // );
-
-    let bool = props.kidActivatedNotionList.some(
-      (e) => notion._id == e.notionId
-    );
-
-    return (
-      <View key={f} style={styles.notionName}>
-        <Text style={styles.notionText}>{notion.notionName}</Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#9CC5A1" }}
-          thumbColor={bool ? "#FFC9B9" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onChange={() => toggleSwitch(notion._id)}
-          value={bool}
-        />
-      </View>
-    );
-  });
+  const [bddToUpdate, setBddToUpdate] = useState(false);
 
   // Récupérer toutes les notions en BDD
   useEffect(() => {
@@ -112,7 +68,7 @@ const Personnalisation = (props) => {
 
   // Récupérer les notions actives du kid actif à partir de l'Id du reducer
   useEffect(() => {
-    async function getKidActivatedNotions() {
+    async function getKidById() {
       var rawResponse = await fetch(
         `${monjson.url}/kids/byId/${activeKid.kidId}`
       );
@@ -124,8 +80,7 @@ const Personnalisation = (props) => {
 
       setKidNotionsResponse(true);
     }
-
-    getKidActivatedNotions();
+    getKidById();
   }, []);
 
   if (!allNotionsResponse || !kidNotionsResponse) {
@@ -135,6 +90,65 @@ const Personnalisation = (props) => {
       </View>
     );
   }
+
+  const OpenSubcategory = (item) => {
+    console.log("item, ", item);
+    setIsVisible(true);
+    setOpenSubCategory(item);
+    setOpenNotionList(allNotionsList.filter((e) => e.subCategory == item));
+  };
+
+  const toggleSwitch = (notionid) => {
+    if (!bddToUpdate) {
+      setBddToUpdate(true);
+    }
+    if (props.kidActivatedNotionList.some((e) => notionid == e.notionId)) {
+      props.deactivateNotion(notionid);
+    } else props.activateNotion({ notionId: notionid });
+  };
+
+  const handleBackdropPress = () => {
+    setIsVisible(false);
+    if (bddToUpdate == true) {
+      async function updateKid() {
+        var rawResponse = await fetch(
+          `${monjson.url}/kids/KidActivatedNotions/${activeKid.kidId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `newActivatedNotionsFromFront=${JSON.stringify(
+              props.kidActivatedNotionList
+            )}`,
+          }
+        );
+        var response = await rawResponse.json();
+        console.log("retour push kidActivatedNotions ", response);
+        setBddToUpdate(false);
+      }
+      updateKid();
+    }
+  };
+
+  var notionsToDisplay = openNotionList.map((notion, f) => {
+    let bool = props.kidActivatedNotionList.some(
+      (e) => notion._id == e.notionId
+    );
+
+    return (
+      <View key={f} style={styles.notionName}>
+        <Text style={styles.notionText}>{notion.notionName}</Text>
+        <Switch
+          trackColor={{ false: "#767577", true: "#9CC5A1" }}
+          thumbColor={bool ? "#FFC9B9" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onChange={() => toggleSwitch(notion._id)}
+          value={bool}
+        />
+      </View>
+    );
+  });
 
   var categoryCardList = categoryList.map((data, i) => {
     var subCategory = data.subCategoryList.map((item, j) => {
@@ -157,7 +171,7 @@ const Personnalisation = (props) => {
           style={styles.overlay}
           isVisible={isVisible}
           onBackdropPress={() => {
-            setIsVisible(false);
+            handleBackdropPress();
           }}
         >
           <View>
