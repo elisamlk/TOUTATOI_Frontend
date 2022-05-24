@@ -372,7 +372,7 @@ const Stats = (props) => {
   useEffect(() => {
     async function getKidStats() {
       var rawResponse = await fetch(
-        `${configUrl.url}/kids/byID/628b4f275680bb4b9b682618`
+        `${configUrl.url}/kids/byID/${activeKid.kidId}`
       );
       var response = await rawResponse.json();
 

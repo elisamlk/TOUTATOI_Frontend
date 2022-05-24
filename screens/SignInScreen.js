@@ -37,18 +37,18 @@ function SignInScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Text>Renseignez votre adresse mail</Text>
+      <Text style={styles.h1}>Renseignez votre adresse mail</Text>
+      <View style={styles.containerForm}>
+        <Input
+          style={styles.input}
+          placeholder="laura@gmail.com"
+          leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}
+          onChangeText={(val) => setEmail(val)}
+        />
+      </View>
 
-      <Input
-        containerStyle={{ marginBottom: 25, width: "70%" }}
-        inputStyle={{ marginLeft: 10 }}
-        placeholder="laura@gmail.com"
-        leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}
-        onChangeText={(val) => setEmail(val)}
-      />
-
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.fonts} flex-start onPress={() => submitMail()}>
+      <TouchableOpacity style={styles.button1}>
+        <Text style={styles.fonts} onPress={() => submitMail()}>
           Continuer
         </Text>
       </TouchableOpacity>
@@ -60,21 +60,44 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "white",
+    justifyContent: "space-between",
+    paddingTop: 50,
+    paddingBottom: 30,
   },
-  button: {
+  h1: {
+    fontFamily: "Lato_400Regular",
+    fontSize: 20,
+    textAlign: "center",
+  },
+  containerForm: {
+    backgroundColor: "#9CC5A1",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 290,
+    height: 200,
+    borderRadius: 20,
+  },
+  input: {
+    width: 300,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 10,
+  },
+  button1: {
+    width: 190,
     color: "white",
     backgroundColor: "#49A078",
-    width: 200,
-    padding: 4,
+    padding: 15,
     marginRight: 10,
     marginBottom: 10,
+    borderRadius: 20,
   },
   fonts: {
     color: "white",
-    marginTop: 10,
-    marginBottom: 8,
     textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 

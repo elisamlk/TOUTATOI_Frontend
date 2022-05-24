@@ -23,8 +23,10 @@ function AccueilScreen(props) {
             `${configUrl.url}/users/getUserByCode?codeFromFront=${userData}` //attention a bien remettre heroku
           );
           let response = await data.json();
-          props.activeUser(response.userId);
-          props.navigation.navigate("BottomNavigator");
+          if (response.result) {
+            props.activeUser(response.userId);
+            props.navigation.navigate("BottomNavigator");
+          }
         };
         getUser();
       }
@@ -33,8 +35,11 @@ function AccueilScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.h1}>Bienvenue sur</Text>
-      <Image source={require("../assets/logoTest.png")}></Image>
+      <Image
+        style={styles.image}
+        source={require("../assets/logoTest.png")}
+      ></Image>
+
       <View style={styles.buttonDisplay}>
         <TouchableOpacity
           style={styles.button1}
@@ -66,14 +71,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "white",
+    // backgroundColor: "white",
     justifyContent: "space-between",
-    paddingTop: 20,
-    paddingBottom: 20,
+
+    paddingBottom: 30,
+    backgroundColor: "#9CC5A1",
+  },
+  image: {
+    borderBottomLeftRadius: 100,
   },
   h1: {
     fontSize: 30,
     fontWeight: "bold",
+    fontFamily: "Lato_400Regular",
   },
   button1: {
     width: 190,
@@ -101,6 +111,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+function mapDispatchToProps(dispatch) {
+  return {
+    activeUser: function (id) {
+      dispatch({ type: "activeUser", id: id });
+    },
+  };
+}
+
+export default connect(null, mapDispatchToProps)(AccueilScreen);
 
 // const windowWidth = Dimensions.get("window").width;
 // const windowHeight = Dimensions.get("window").height;

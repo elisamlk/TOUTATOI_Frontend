@@ -36,22 +36,24 @@ function SignUpScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Text>Inscrivez-vous pour jouer sur tous vos appareils</Text>
+      <Text style={styles.h1}>
+        Inscrivez-vous pour jouer sur tous vos appareils
+      </Text>
+      <View style={styles.containerForm}>
+        <Input
+          style={styles.input}
+          placeholder="Mail du parent"
+          leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}
+          onChangeText={(val) => setEmail(val)}
+        />
+      </View>
 
-      <Input
-        containerStyle={{ marginBottom: 25, width: "70%" }}
-        inputStyle={{ marginLeft: 10 }}
-        placeholder="laura@gmail.com"
-        leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}
-        onChangeText={(val) => setEmail(val)}
-      />
+      <Text style={styles.text}>
+        En continuant, j'accepte les conditions générales d'utilisation.
+      </Text>
 
-      <Text>En continuant, j'accepte les conditions d'utilisation</Text>
-
-      <TouchableOpacity style={styles.button} onPress={() => submitMail()}>
-        <Text style={styles.fonts} flex-start>
-          Continuer
-        </Text>
+      <TouchableOpacity style={styles.button1} onPress={() => submitMail()}>
+        <Text style={styles.fonts}>Continuer</Text>
       </TouchableOpacity>
     </View>
   );
@@ -61,21 +63,51 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "space-around",
+    backgroundColor: "white",
+    justifyContent: "space-between",
+    paddingTop: 50,
+    paddingBottom: 30,
   },
-  button: {
+  h1: {
+    fontFamily: "Lato_400Regular",
+    fontSize: 20,
+    textAlign: "center",
+  },
+  containerForm: {
+    backgroundColor: "#9CC5A1",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 290,
+    height: 200,
+    borderRadius: 20,
+  },
+  button1: {
+    width: 190,
     color: "white",
     backgroundColor: "#49A078",
-    width: 200,
-    padding: 4,
+    padding: 15,
     marginRight: 10,
     marginBottom: 10,
+    borderRadius: 20,
   },
   fonts: {
     color: "white",
-    marginTop: 10,
-    marginBottom: 8,
     textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  text: {
+    textAlign: "center",
+    fontFamily: "Lato_400Regular",
+    marginBottom: 20,
+    padding: 20,
+    fontSize: 15,
+  },
+  input: {
+    width: 300,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 10,
   },
 });
 
