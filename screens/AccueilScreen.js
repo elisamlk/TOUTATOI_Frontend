@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-import monjson from "../jsonModels/url.json";
+import configUrl from "../config/url.json";
 
 function AccueilScreen(props) {
   useEffect(() => {
@@ -20,7 +20,7 @@ function AccueilScreen(props) {
       if (userData) {
         const getUser = async () => {
           let data = await fetch(
-            `http://192.168.10.150:3000/users/getUserByCode?codeFromFront=${userData}` //attention a bien remettre heroku
+            `${configUrl.url}/users/getUserByCode?codeFromFront=${userData}` //attention a bien remettre heroku
           );
           let response = await data.json();
           props.activeUser(response.userId);
@@ -43,7 +43,8 @@ function AccueilScreen(props) {
       <View>
         <TouchableOpacity
           style={styles.button1}
-          onPress={() => props.navigation.navigate("KidProfil")}>
+          onPress={() => props.navigation.navigate("KidProfil")}
+        >
           <Text style={styles.fonts} flex-start>
             C'est parti !
           </Text>
@@ -51,12 +52,14 @@ function AccueilScreen(props) {
 
         <TouchableOpacity
           style={styles.button2}
-          onPress={() => props.navigation.navigate("SignIn")}>
+          onPress={() => props.navigation.navigate("SignIn")}
+        >
           <Text style={styles.fonts}>J'ai un compte</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button2}
-          onPress={() => props.navigation.navigate("SignIn")}>
+          onPress={() => props.navigation.navigate("SignIn")}
+        >
           <Text style={styles.fonts}>Je suis invité</Text>
         </TouchableOpacity>
       </View>

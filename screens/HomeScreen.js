@@ -7,7 +7,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { connect } from "react-redux";
 import { createPortal } from "react-dom";
-import monjson from "../jsonModels/url.json";
+import configUrl from "../config/url.json";
 
 function HomeScreen(props) {
   const [isVisible, setIsVisible] = useState(false); //AFFICHAGE DE L'OVERLAY
@@ -17,7 +17,7 @@ function HomeScreen(props) {
 
   //AJOUTER UN ENFANT A LA BASE DE DONNEES PUIS AU REDUCER-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   var handleAddKid = async () => {
-    let data = await fetch(`${monjson.url}/kids/addKid`, {
+    let data = await fetch(`${configUrl.url}/kids/addKid`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `userIdFromFront=${props.user}&firstNameFromFront=${kidName}&gradeFromFront=${kidGrade}`,
@@ -38,7 +38,7 @@ function HomeScreen(props) {
   useEffect(() => {
     const getKid = async () => {
       let data = await fetch(
-        `${monjson.url}/kids/getKidsByUserId?userIdFromFront=${props.user}`
+        `${configUrl.url}/kids/getKidsByUserId?userIdFromFront=${props.user}`
       );
       let response = await data.json();
       let firstIsActive = false;
@@ -62,7 +62,7 @@ function HomeScreen(props) {
   //LES SUPPRIMER _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ ROUTE QUASIMENT PRETE SAUF QU'ELLE NE SEMBLE PAS SUPPRIMER LE BON ENFANT...
   /*   var deleteKid = async (kid) => {
     await fetch(
-      `${monjson.url}/kids/deleteKid/${kid.kidId}`, 
+      `${configUrl.url}/kids/deleteKid/${kid.kidId}`, 
       {
         method: "DELETE",
       }
@@ -83,7 +83,8 @@ function HomeScreen(props) {
         style={styles.card}
         onPress={() => {
           isActiveToggle(i);
-        }}>
+        }}
+      >
         <Button
           buttonStyle={{
             height: 50,
@@ -101,7 +102,8 @@ function HomeScreen(props) {
             justifyContent: "center",
             paddingTop: 15,
             paddingHorizontal: 10,
-          }}>
+          }}
+        >
           {kidItem.kidFirstName}
         </Card.Title>
         <Button
@@ -157,7 +159,8 @@ function HomeScreen(props) {
         isVisible={isVisible}
         onBackdropPress={() => {
           setIsVisible(false);
-        }}>
+        }}
+      >
         <View>
           <Input
             containerStyle={{ marginBottom: 25 }}
@@ -189,12 +192,14 @@ function HomeScreen(props) {
               elevation: 8,
               backgroundColor: "#FFC9B9",
               marginTop: 30,
-            }}>
+            }}
+          >
             <Text
               onPress={() => {
                 setIsVisible(true);
               }}
-              style={{ margin: 10, color: "grey", justifyContent: "center" }}>
+              style={{ margin: 10, color: "grey", justifyContent: "center" }}
+            >
               Ajouter un nouvel enfant
             </Text>
           </TouchableOpacity>
@@ -208,13 +213,15 @@ function HomeScreen(props) {
               backgroundColor: "#216869",
               marginTop: 50,
               marginBottom: 100,
-            }}>
+            }}
+          >
             <Text
               onPress={() => {
                 AsyncStorage.clear();
                 props.navigation.navigate("Accueil");
               }}
-              style={{ margin: 10, color: "white", justifyContent: "center" }}>
+              style={{ margin: 10, color: "white", justifyContent: "center" }}
+            >
               Déconnexion
             </Text>
           </TouchableOpacity>

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Input } from "react-native-elements";
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
-import monjson from "../jsonModels/url.json";
+import configUrl from "../config/url.json";
 
 function SignInScreen(props) {
   const [email, setEmail] = useState("");
@@ -21,7 +21,7 @@ function SignInScreen(props) {
     // console.log("SIGN isEmailValid =>", isEmailValid);
 
     if (isEmailValid) {
-      var response = await fetch(`${monjson.url}/users/submitMail`, {
+      var response = await fetch(`${configUrl.url}/users/submitMail`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `mailFromFront=${email}&isNew=false`,
