@@ -20,6 +20,7 @@ import kidList from "./reducers/kidList";
 import answerList from "./reducers/answerList";
 import firstKid from "./reducers/firstKid";
 import kidActivatedNotionList from "./reducers/kidActivatedNotionList";
+import kidCustomWordsList from "./reducers/kidCustomWordsList";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 
@@ -32,6 +33,7 @@ const store = createStore(
     firstKid,
     answerList,
     kidActivatedNotionList,
+    kidCustomWordsList,
   })
 );
 
@@ -43,7 +45,9 @@ const BottomNavigator = () => {
           let iconName;
 
           if (route.name == "Dashboard") {
-            return <Ionicons name="settings" size={24} color={color} />;
+            return (
+              <Ionicons name="settings" size={24} color={color} />
+            );
           } else if (route.name == "Challenge") {
             return <FontAwesome5 name="rocket" size={24} color={color} />;
           } else if (route.name == "Home") {
@@ -73,7 +77,7 @@ export default function App() {
     <Provider store={store}>
       <LoadFonts>
         <NavigationContainer>
-          <Stack.Navigator>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Accueil" component={AccueilScreen} />
             <Stack.Screen name="KidProfil" component={KidProfilScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />

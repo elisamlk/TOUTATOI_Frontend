@@ -6,23 +6,18 @@ import {
   StatusBar,
   ScrollView,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Switch,
 } from "react-native";
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from "react-native-chart-kit";
+import { BarChart } from "react-native-chart-kit";
 import { Text, Card } from "@rneui/themed";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { Overlay, Badge } from "react-native-elements";
+import { Overlay, Badge, Input, Button } from "react-native-elements";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { connect } from "react-redux";
 import configUrl from "../config/url.json";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 // Onglet personnalisation des notions
 const data = [
@@ -32,6 +27,8 @@ const data = [
   { label: "CM1", value: "4" },
   { label: "CM2", value: "5" },
 ];
+
+// ONGLET PERSONNALISATION DES NOTIONS & DE LA LISTE DE MOTS
 
 const Personnalisation = (props) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -46,6 +43,9 @@ const Personnalisation = (props) => {
   const [openNotionList, setOpenNotionList] = useState([]);
   const [bddToUpdate, setBddToUpdate] = useState(false);
   const [value, setValue] = useState(null); /* classe de l'enfant (CP, CE1) */
+  const [kidWords, setKidWords] = useState([]);
+  const [kidWordsReponse, setKidWordsReponse] = useState(false);
+  const [newWord, setNewWord] = useState("");
 
   // Récupérer toutes les notions en BDD
   useEffect(() => {
@@ -78,7 +78,7 @@ const Personnalisation = (props) => {
     getAllNotions();
   }, []);
 
-  // Récupérer les notions actives du kid actif à partir de l'Id du reducer
+  // Récupérer les notions actives + la liste de mots perso du kid actif à partir de l'Id du reducer
   useEffect(() => {
     async function getKidById() {
       var rawResponse = await fetch(
@@ -88,15 +88,17 @@ const Personnalisation = (props) => {
 
       if (response) {
         props.initiateNotionList(response.kid.activatedNotions);
+        props.initiateCustomWordsList(response.kid.customWords);
+        setValue(response.kid.grade);
+        setKidNotionsResponse(true);
+        setKidWordsReponse(true);
       }
-
-      setValue(response.kid.grade);
-      setKidNotionsResponse(true);
     }
     getKidById();
   }, []);
 
-  if (!allNotionsResponse || !kidNotionsResponse) {
+  // Condition pour afficher "chargement" tant qu'on n'a pas récupéré les informations depuis la BDD
+  if (!allNotionsResponse || !kidNotionsResponse || !kidWordsReponse) {
     return (
       <View>
         <Text>Chargememnt...</Text>
@@ -104,8 +106,9 @@ const Personnalisation = (props) => {
     );
   }
 
+  // AFFICHAGE DES NOTIONS PERSONNALISEES
+
   const OpenSubcategory = (item) => {
-    console.log("item, ", item);
     setIsVisible(true);
     setOpenSubCategory(item);
     setOpenNotionList(allNotionsList.filter((e) => e.subCategory == item));
@@ -196,6 +199,61 @@ const Personnalisation = (props) => {
     );
   });
 
+  // AFFICHAGE DE LA LISTE DE MOTS (mise à jour dans la BDD et dans le reducer dédié)
+
+  let addNewWord = async (word) => {
+    var response = await fetch(
+      `${configUrl.url}/kids/addKidCustomWord/${activeKid.kidId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `newCustomWordFromFront=${word}`,
+      }
+    );
+    let result = await response.json();
+
+    if (result) {
+      props.addNewWord(word);
+    }
+  };
+
+  let deleteWord = async (word) => {
+    var response = await fetch(
+      `${configUrl.url}/kids/deleteKidCustomWord/${activeKid.kidId}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `customWordToDeleteFromFront=${word}`,
+      }
+    );
+    let result = await response.json();
+
+    if (result) {
+      props.deleteWord(word);
+    }
+  };
+
+  var wordsList = props.kidCustomWordsList.map((word, k) => {
+    return (
+      <View key={k}>
+        <Text>{word.label}</Text>
+        <Button
+          buttonStyle={{
+            height: 30,
+            width: 30,
+            borderRadius: 50,
+            backgroundColor: "#FABE6D",
+          }}
+          containerStyle={{ paddingTop: 12 }}
+          icon={<FontAwesome5 name="trash" size={12} color="white" />}
+          // disabled={isSelected !== i ? true : false}
+          // disabledStyle={{ backgroundColor: "grey" }}
+          onPress={() => deleteWord(word.label)}
+        />
+      </View>
+    );
+  });
+
   const renderItem = (item) => {
     return (
       <View style={styles.item}>
@@ -271,6 +329,28 @@ const Personnalisation = (props) => {
               renderItem={renderItem}
             />
           </View>
+          <View style={styles.wordCard}>
+            <Card.Title style={styles.title}>Liste de mots</Card.Title>
+
+            <Input
+              containerStyle={{ marginBottom: 25, width: "70%" }}
+              inputStyle={{ marginLeft: 10 }}
+              placeholder="Ajoutez un mot à votre liste"
+              onChangeText={(val) => setNewWord(val)}
+            />
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => addNewWord(newWord)}
+            >
+              <Text style={styles.fonts} flex-start>
+                Ajouter
+              </Text>
+            </TouchableOpacity>
+
+            {wordsList}
+          </View>
+
           {categoryCardList}
         </View>
       </ScrollView>
@@ -278,7 +358,7 @@ const Personnalisation = (props) => {
   );
 };
 
-// Onglet Statistiques
+// ONGLET STATISTIQUES
 
 const Stats = (props) => {
   const screenWidth = Dimensions.get("window").width;
@@ -292,12 +372,10 @@ const Stats = (props) => {
   useEffect(() => {
     async function getKidStats() {
       var rawResponse = await fetch(
-        `${configUrl.url}/kids/byID/628b4f275680bb4b9b682618`
+        `${configUrl.url}/kids/byID/${activeKid.kidId}`
       );
       var response = await rawResponse.json();
-      console.log("kid =>", response.kid);
-      console.log("kid.xp =>", response.kid.xp);
-      console.log("kid.consecutiveDaysNb", response.kid.consecutiveDaysNb);
+
       setKidXp(response.kid.xp);
       setKidConsecutiveDaysNb(response.kid.consecutiveDaysNb);
       setKidStatsResponse(true);
@@ -311,8 +389,6 @@ const Stats = (props) => {
     graphLabels.push(element.date);
     graphValues.push(element.xpNb);
   }
-  console.log("labels =>", graphLabels);
-  console.log("values =>", graphValues);
 
   const data = {
     datasets: [
@@ -414,6 +490,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white",
+    borderRadius: 15,
+    shadowOffset: { width: 5, height: 5 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 8,
+    paddingLeft: 16,
+    paddingRight: 14,
+    marginTop: 15,
+    marginBottom: 20,
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  wordCard: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "red",
+    height: 600,
     borderRadius: 15,
     shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 1,
@@ -553,6 +646,15 @@ function mapDispatchToProps(dispatch) {
     initiateNotionList: function (list) {
       dispatch({ type: "submitActivatedNotionList", list });
     },
+    initiateCustomWordsList: function (list) {
+      dispatch({ type: "initiateCustomWordsList", list });
+    },
+    addNewWord: function (newWord) {
+      dispatch({ type: "addNewWord", newWord });
+    },
+    deleteWord: function (wordToDelete) {
+      dispatch({ type: "deleteWord", wordToDelete });
+    },
   };
 }
 
@@ -560,6 +662,7 @@ function mapStateToProps(state) {
   return {
     kidList: state.kidList,
     kidActivatedNotionList: state.kidActivatedNotionList,
+    kidCustomWordsList: state.kidCustomWordsList,
   };
 }
 
