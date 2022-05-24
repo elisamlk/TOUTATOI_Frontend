@@ -83,7 +83,8 @@ function HomeScreen(props) {
         style={styles.card}
         onPress={() => {
           isActiveToggle(i);
-        }}>
+        }}
+      >
         <Button
           buttonStyle={{
             height: 50,
@@ -101,7 +102,8 @@ function HomeScreen(props) {
             justifyContent: "center",
             paddingTop: 15,
             paddingHorizontal: 10,
-          }}>
+          }}
+        >
           {kidItem.kidFirstName}
         </Card.Title>
         <Button
@@ -138,26 +140,14 @@ function HomeScreen(props) {
   });
 
   return (
-    <View style={styles.container}>
-      <Header
-        placement="center"
-        centerComponent={{
-          text: "HOMEPAGE",
-          style: {
-            color: "#fff",
-            marginBottom: 5,
-          },
-        }}
-        containerStyle={{
-          backgroundColor: "#216869",
-        }}
-      />
+    <View>
       <Overlay
         overlayStyle={{ width: 280, borderRadius: 15 }}
         isVisible={isVisible}
         onBackdropPress={() => {
           setIsVisible(false);
-        }}>
+        }}
+      >
         <View>
           <Input
             containerStyle={{ marginBottom: 25 }}
@@ -169,52 +159,44 @@ function HomeScreen(props) {
             placeholder="En quelle classe est-il ?"
             onChangeText={(val) => setKidGrade(val)}
           />
-          <Button
+          <TouchableOpacity style={styles.button2}>
+            <Text style={styles.fonts} onPress={() => handleAddKid()}>
+              Ajouter l'enfant
+            </Text>
+          </TouchableOpacity>
+
+          {/* <Button
+          style={styles.button2}
             title="Ajoutez l'enfant"
-            buttonStyle={{ backgroundColor: "#FFC9B9" }}
             onPress={() => handleAddKid()}
             type="solid"
-          />
+          /> */}
         </View>
       </Overlay>
-      <ScrollView style={{ width: "100%", paddingHorizontal: 20 }}>
-        {kidsItem}
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={{
-              borderRadius: 15,
-              shadowOffset: { width: 5, height: 5 },
-              shadowOpacity: 1,
-              shadowRadius: 8,
-              elevation: 8,
-              backgroundColor: "#FFC9B9",
-              marginTop: 30,
-            }}>
+      <ScrollView
+        style={{ width: "100%", paddingHorizontal: 20, marginTop: 50 }}
+      >
+        <View>{kidsItem}</View>
+
+        <View style={styles.buttonDisplay}>
+          <TouchableOpacity style={styles.button2}>
             <Text
+              style={styles.fonts}
               onPress={() => {
                 setIsVisible(true);
               }}
-              style={{ margin: 10, color: "grey", justifyContent: "center" }}>
+            >
               Ajouter un nouvel enfant
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              borderRadius: 15,
-              shadowOffset: { width: 5, height: 5 },
-              shadowOpacity: 1,
-              shadowRadius: 8,
-              elevation: 8,
-              backgroundColor: "#216869",
-              marginTop: 50,
-              marginBottom: 100,
-            }}>
+          <TouchableOpacity style={styles.button1}>
             <Text
               onPress={() => {
                 AsyncStorage.clear();
                 props.navigation.navigate("Accueil");
               }}
-              style={{ margin: 10, color: "white", justifyContent: "center" }}>
+              style={styles.fonts}
+            >
               Déconnexion
             </Text>
           </TouchableOpacity>
@@ -225,14 +207,13 @@ function HomeScreen(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-  },
-  header: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-  },
+  // container: {
+  //   flex: 1,
+  //   alignItems: "center",
+  //   paddingTop: 50,
+  //   justifyContent: "space-between",
+  // },
+
   card: {
     display: "flex",
     flexDirection: "row",
@@ -251,6 +232,36 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginLeft: 16,
     marginRight: 16,
+  },
+  button1: {
+    width: 190,
+    color: "white",
+    backgroundColor: "#49A078",
+    padding: 15,
+    marginRight: 10,
+    marginBottom: 10,
+    borderRadius: 20,
+  },
+  button2: {
+    width: 250,
+    color: "white",
+    backgroundColor: "#FFC9B9",
+    padding: 15,
+    marginRight: 10,
+    marginTop: 20,
+    marginBottom: 20,
+    borderRadius: 20,
+  },
+  fonts: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  buttonDisplay: {
+    flex: 1,
+    alignItems: "center",
+    marginBottom: 30,
   },
 });
 

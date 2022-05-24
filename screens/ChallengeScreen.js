@@ -77,7 +77,8 @@ function ChallengeScreen(props) {
       <Text
         onPress={() => {
           setAnswerVisible(!answerVisible);
-        }}>
+        }}
+      >
         {questionList[idQuestionToShow].answerLabel}
       </Text>
     );
@@ -132,7 +133,8 @@ function ChallengeScreen(props) {
             justifyContent: "center",
             flexDirection: "row",
             height: 200,
-          }}>
+          }}
+        >
           <Button
             title="Bonne réponse"
             onPress={() => {
