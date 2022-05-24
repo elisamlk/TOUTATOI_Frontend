@@ -20,6 +20,7 @@ import kidList from "./reducers/kidList";
 import answerList from "./reducers/answerList";
 import firstKid from "./reducers/firstKid";
 import kidActivatedNotionList from "./reducers/kidActivatedNotionList";
+import kidCustomWordsList from "./reducers/kidCustomWordsList";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 
@@ -32,6 +33,7 @@ const store = createStore(
     firstKid,
     answerList,
     kidActivatedNotionList,
+    kidCustomWordsList,
   })
 );
 
