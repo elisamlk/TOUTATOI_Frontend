@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#9CC5A1",
   },
   image: {
+    width: "100%",
     borderBottomLeftRadius: 100,
   },
   h1: {
