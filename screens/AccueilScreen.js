@@ -23,8 +23,10 @@ function AccueilScreen(props) {
             `${configUrl.url}/users/getUserByCode?codeFromFront=${userData}` //attention a bien remettre heroku
           );
           let response = await data.json();
-          props.activeUser(response.userId);
-          props.navigation.navigate("BottomNavigator");
+          if (response.result) {
+            props.activeUser(response.userId);
+            props.navigation.navigate("BottomNavigator");
+          }
         };
         getUser();
       }
