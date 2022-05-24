@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-import monjson from "../jsonModels/url.json";
+import configUrl from "../config/url.json";
 
 function AccueilScreen(props) {
   useEffect(() => {
@@ -20,7 +20,7 @@ function AccueilScreen(props) {
       if (userData) {
         const getUser = async () => {
           let data = await fetch(
-            `${monjson.url}/users/getUserByCode?codeFromFront=${userData}` //attention a bien remettre heroku
+            `${configUrl.url}/users/getUserByCode?codeFromFront=${userData}` //attention a bien remettre heroku
           );
           let response = await data.json();
           props.activeUser(response.userId);

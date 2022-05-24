@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { connect } from "react-redux";
 import { Header, Card, Button, Overlay, Input } from "react-native-elements";
-import monjson from "../jsonModels/url.json";
+import configUrl from "../config/url.json";
 
 function ChallengeScreen(props) {
   const [challenge, setChallenge] = useState({});
@@ -19,7 +19,7 @@ function ChallengeScreen(props) {
     setActiveKid(props.kidList.find((e) => e.isActive == true));
     async function getChallenge() {
       var rawResponse = await fetch(
-        `${monjson.url}/getChallengeOfTheDay?kidIdFromFront=${activeKid.kidId}`
+        `${configUrl.url}/getChallengeOfTheDay?kidIdFromFront=${activeKid.kidId}`
       );
       var response = await rawResponse.json();
       console.log("responsedufetch ", response);
@@ -77,7 +77,8 @@ function ChallengeScreen(props) {
       <Text
         onPress={() => {
           setAnswerVisible(!answerVisible);
-        }}>
+        }}
+      >
         {questionList[idQuestionToShow].answerLabel}
       </Text>
     );
@@ -100,7 +101,7 @@ function ChallengeScreen(props) {
         onPress={() => {
           async function pushResults() {
             console.log("liste results ", props.answerList);
-            var rawResponse = await fetch(`${monjson.url}/resultsOfTheDay`, {
+            var rawResponse = await fetch(`${configUrl.url}/resultsOfTheDay`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -132,7 +133,8 @@ function ChallengeScreen(props) {
             justifyContent: "center",
             flexDirection: "row",
             height: 200,
-          }}>
+          }}
+        >
           <Button
             title="Bonne réponse"
             onPress={() => {

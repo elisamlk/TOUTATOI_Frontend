@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Input } from "react-native-elements";
 import { connect } from "react-redux";
-import monjson from "../jsonModels/url.json";
+import configUrl from "../config/url.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function ConfirmationCodeScreen(props) {
@@ -15,7 +15,7 @@ function ConfirmationCodeScreen(props) {
 
     if (confCodeFromFront) {
       let verifyCodeResponse = await fetch(
-        `${monjson.url}/users/submitConfirmationCode`,
+        `${configUrl.url}/users/submitConfirmationCode`,
         {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -32,7 +32,7 @@ function ConfirmationCodeScreen(props) {
       if (props.firstKid.name) {
         console.log("il y a un enfant dans le reducer");
         if (verifyCodeResult.result) {
-          let createKidResponse = await fetch(`${monjson.url}/kids/addKid`, {
+          let createKidResponse = await fetch(`${configUrl.url}/kids/addKid`, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `userIdFromFront=${props.activeUser}&firstNameFromFront=${props.firstKid.name}&gradeFromFront=${props.firstKid.grade}`,
