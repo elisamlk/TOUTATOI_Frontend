@@ -1,12 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Input } from "react-native-elements";
+import { Dropdown } from "react-native-element-dropdown";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import { connect } from "react-redux";
-import monjson from "../jsonModels/url.json";
+import configUrl from "../config/url.json";
+import configStyle from "../config/style.js";
 
 function KidProfilScreen(props) {
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
+  const [value, setValue] = useState(null); /* classe de l'enfant (CP, CE1) */
+
+  const data = [
+    { label: "CP", value: "1" },
+    { label: "CE1", value: "2" },
+    { label: "CE2", value: "3" },
+    { label: "CM1", value: "4" },
+    { label: "CM2", value: "5" },
+  ];
+
+  const renderItem = (item) => {
+    return (
+      <View style={configStyle.item}>
+        <Text style={configStyle.textItem}>{item.label}</Text>
+        {item.value === value && (
+          <AntDesign
+            style={configStyle.icon}
+            color="black"
+            name="Safety"
+            size={20}
+          />
+        )}
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -18,11 +46,41 @@ function KidProfilScreen(props) {
           placeholder="Prénom"
           onChangeText={(val) => setName(val)}
         />
-        <Input
+        {/* <Input
           containerStyle={{ marginBottom: 25, width: "70%" }}
           inputStyle={{ marginLeft: 10 }}
           placeholder="Classe"
           onChangeText={(val) => setGrade(val)}
+        /> */}
+        <Text>Classe de l'enfant</Text>
+        <Dropdown
+          style={configStyle.dropdown}
+          placeholderStyle={configStyle.placeholderStyle}
+          selectedTextStyle={configStyle.selectedTextStyle}
+          inputSearchStyle={configStyle.inputSearchStyle}
+          iconStyle={configStyle.iconStyle}
+          data={data}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="du CP au CM2"
+          searchPlaceholder="Search..."
+          value={value}
+          dropdownPosition="bottom"
+          onChange={(item) => {
+            setValue(item.value);
+            setGrade(item.label);
+          }}
+          renderLeftIcon={() => (
+            <AntDesign
+              style={configStyle.icon}
+              color="black"
+              name="Safety"
+              size={20}
+            />
+          )}
+          renderItem={renderItem}
         />
       </View>
 

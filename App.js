@@ -19,13 +19,22 @@ import activeUser from "./reducers/activeUser";
 import kidList from "./reducers/kidList";
 import answerList from "./reducers/answerList";
 import firstKid from "./reducers/firstKid";
+import kidActivatedNotionList from "./reducers/kidActivatedNotionList";
+import kidCustomWordsList from "./reducers/kidCustomWordsList";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const store = createStore(
-  combineReducers({ activeUser, kidList, firstKid, answerList })
+  combineReducers({
+    activeUser,
+    kidList,
+    firstKid,
+    answerList,
+    kidActivatedNotionList,
+    kidCustomWordsList,
+  })
 );
 
 const BottomNavigator = () => {
@@ -52,7 +61,8 @@ const BottomNavigator = () => {
         style: {
           backgroundColor: "#9CC5A1",
         },
-      }}>
+      }}
+    >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Challenge" component={ChallengeScreen} />
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
