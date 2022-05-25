@@ -1,4 +1,37 @@
 const configStyle = {
+  container: {
+    alignItems: "center",
+  },
+  header: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  card: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    height: 75,
+    backgroundColor: "white",
+    borderRadius: 15,
+    shadowOffset: { width: 5, height: 5 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 8,
+    paddingLeft: 16,
+    paddingRight: 14,
+    marginTop: 15,
+    marginBottom: 20,
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  trashbutton: {
+    height: 30,
+    width: 30,
+    borderRadius: 50,
+    backgroundColor: "grey",
+  },
   dropdowncontainer: {
     paddingLeft: 20,
     flexDirection: "row",

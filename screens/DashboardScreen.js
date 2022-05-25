@@ -19,7 +19,8 @@ import { connect } from "react-redux";
 import configUrl from "../config/url.json";
 import { FontAwesome5 } from "@expo/vector-icons";
 import configStyle from "../config/style";
-import { ListItem } from "@rneui/themed";
+
+import activeKid from "../reducers/activeKid";
 
 // Onglet personnalisation des notions
 const data = [
@@ -38,15 +39,10 @@ const Personnalisation = (props) => {
   const [categoryList, setCategoryList] = useState([]);
   const [allNotionsResponse, setAllNotionsResponse] = useState(false);
   const [kidNotionsResponse, setKidNotionsResponse] = useState(false);
-  const [activeKid, setActiveKid] = useState(
-    props.kidList.find((e) => e.isActive == true)
-  );
   const [openSubCategory, setOpenSubCategory] = useState("");
   const [openNotionList, setOpenNotionList] = useState([]);
   const [bddToUpdate, setBddToUpdate] = useState(false);
-  const [value, setValue] = useState(null); /* classe de l'enfant (CP, CE1) */
-  const [kidWords, setKidWords] = useState([]);
-  const [kidWordsReponse, setKidWordsReponse] = useState(false);
+  const [value, setValue] = useState(props.activeKid.grade);
   const [newWord, setNewWord] = useState("");
 
   // Récupérer toutes les notions en BDD
@@ -80,27 +76,8 @@ const Personnalisation = (props) => {
     getAllNotions();
   }, []);
 
-  // Récupérer les notions actives + la liste de mots perso du kid actif à partir de l'Id du reducer
-  useEffect(() => {
-    async function getKidById() {
-      var rawResponse = await fetch(
-        `${configUrl.url}/kids/byId/${activeKid.kidId}`
-      );
-      var response = await rawResponse.json();
-
-      if (response) {
-        props.initiateNotionList(response.kid.activatedNotions);
-        props.initiateCustomWordsList(response.kid.customWords);
-        setValue(response.kid.grade);
-        setKidNotionsResponse(true);
-        setKidWordsReponse(true);
-      }
-    }
-    getKidById();
-  }, []);
-
   // Condition pour afficher "chargement" tant qu'on n'a pas récupéré les informations depuis la BDD
-  if (!allNotionsResponse || !kidNotionsResponse || !kidWordsReponse) {
+  if (!allNotionsResponse) {
     return (
       <View>
         <Text>Chargement...</Text>
@@ -120,7 +97,8 @@ const Personnalisation = (props) => {
     if (!bddToUpdate) {
       setBddToUpdate(true);
     }
-    if (props.kidActivatedNotionList.some((e) => notionid == e.notionId)) {
+    if (props.activeKid.activatedNotions.some((e) => notionid == e.notionId)) {
+      console.log("je désactive !!");
       props.deactivateNotion(notionid);
     } else props.activateNotion({ notionId: notionid });
   };
@@ -130,14 +108,14 @@ const Personnalisation = (props) => {
     if (bddToUpdate == true) {
       async function updateKid() {
         var rawResponse = await fetch(
-          `${configUrl.url}/kids/KidActivatedNotions/${activeKid.kidId}`,
+          `${configUrl.url}/kids/KidActivatedNotions/${props.activeKid.kidId}`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
             },
             body: `newActivatedNotionsFromFront=${JSON.stringify(
-              props.kidActivatedNotionList
+              props.activeKid.activatedNotions
             )}`,
           }
         );
@@ -150,19 +128,19 @@ const Personnalisation = (props) => {
   };
 
   var notionsToDisplay = openNotionList.map((notion, f) => {
-    let bool = props.kidActivatedNotionList.some(
-      (e) => notion._id == e.notionId
-    );
-
     return (
       <View key={f} style={styles.notionName}>
         <Text style={styles.notionText}>{notion.notionName}</Text>
         <Switch
           trackColor={{ false: "#767577", true: "#9CC5A1" }}
-          thumbColor={bool ? "#FFC9B9" : "#f4f3f4"}
+          thumbColor={props.activeKid.activatedNotions.some((e) =>
+            notion._id == e.notionId ? "#FFC9B9" : "#f4f3f4"
+          )}
           ios_backgroundColor="#3e3e3e"
           onChange={() => toggleSwitch(notion._id)}
-          value={bool}
+          value={props.activeKid.activatedNotions.some(
+            (e) => notion._id == e.notionId
+          )}
         />
       </View>
     );
@@ -175,7 +153,8 @@ const Personnalisation = (props) => {
           key={j}
           onPress={() => {
             OpenSubcategory(item);
-          }}>
+          }}
+        >
           <Text style={styles.button}>{item}</Text>
         </TouchableOpacity>
       );
@@ -189,7 +168,8 @@ const Personnalisation = (props) => {
           isVisible={isVisible}
           onBackdropPress={() => {
             handleBackdropPress();
-          }}>
+          }}
+        >
           <View>
             <Text style={styles.subCategory}>{openSubCategory}</Text>
           </View>
@@ -201,39 +181,41 @@ const Personnalisation = (props) => {
 
   // AFFICHAGE DE LA LISTE DE MOTS (mise à jour dans la BDD et dans le reducer dédié)
 
-  let addNewWord = async (word) => {
-    var response = await fetch(
-      `${configUrl.url}/kids/addKidCustomWord/${activeKid.kidId}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `newCustomWordFromFront=${word}`,
-      }
-    );
-    let result = await response.json();
-
-    if (result) {
+  const clickAdd = (word) => {
+    if (!props.activeKid.customWords.some((e) => e.label == word)) {
       props.addNewWord(word);
-    }
-  };
-
-  let deleteWord = async (word) => {
-    var response = await fetch(
-      `${configUrl.url}/kids/deleteKidCustomWord/${activeKid.kidId}`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `customWordToDeleteFromFront=${word}`,
+      async function updateKid() {
+        var response = await fetch(
+          `${configUrl.url}/kids/addKidCustomWord/${props.activeKid.kidId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `newCustomWordFromFront=${word}`,
+          }
+        );
+        let result = await response.json();
       }
-    );
-    let result = await response.json();
-
-    if (result) {
-      props.deleteWord(word);
+      updateKid();
     }
   };
 
-  var wordsList = props.kidCustomWordsList.map((word, k) => {
+  const clicktrash = (word) => {
+    props.deleteWord(word);
+    async function updateKid() {
+      var response = await fetch(
+        `${configUrl.url}/kids/deleteKidCustomWord/${props.activeKid.kidId}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `customWordToDeleteFromFront=${word}`,
+        }
+      );
+      let result = await response.json();
+    }
+    updateKid();
+  };
+
+  var wordsList = props.activeKid.customWords.map((word, k) => {
     return (
       <View style={configStyle.words} key={k}>
         <Text style={configStyle.text}>{word.label}</Text>
@@ -248,7 +230,7 @@ const Personnalisation = (props) => {
           icon={<FontAwesome5 name="trash" size={12} color="white" />}
           // disabled={isSelected !== i ? true : false}
           // disabledStyle={{ backgroundColor: "grey" }}
-          onPress={() => deleteWord(word.label)}
+          onPress={() => clicktrash(word.label)}
         />
       </View>
     );
@@ -274,7 +256,7 @@ const Personnalisation = (props) => {
     setValue(item.value);
     async function updateKid() {
       var rawResponse = await fetch(
-        `${configUrl.url}/kids/KidGrade/${activeKid.kidId}`,
+        `${configUrl.url}/kids/KidGrade/${props.activeKid.kidId}`,
         {
           method: "PUT",
           headers: {
@@ -294,7 +276,7 @@ const Personnalisation = (props) => {
       <ScrollView>
         <View style={styles.container}>
           <Text style={styles.titleDash}>
-            Cockpit de {activeKid.kidFirstName}
+            Cockpit de {props.activeKid.kidFirstName}
           </Text>
           <Text style={styles.fonts} h4>
             Aidez nous à personnaliser le programme de votre enfant !
@@ -340,7 +322,8 @@ const Personnalisation = (props) => {
 
             <TouchableOpacity
               style={configStyle.buttonList}
-              onPress={() => addNewWord(newWord)}>
+              onPress={() => clickAdd(newWord)}
+            >
               <Text style={configStyle.buttonFonts}>Ajouter</Text>
             </TouchableOpacity>
             <View style={configStyle.wordsListItem}>{wordsList}</View>
@@ -357,26 +340,14 @@ const Personnalisation = (props) => {
 
 const Stats = (props) => {
   const screenWidth = Dimensions.get("window").width;
-  const [activeKid, setActiveKid] = useState(
-    props.kidList.find((e) => e.isActive == true)
+  // const [activeKid, setActiveKid] = useState(
+  //   props.kidList.find((e) => e.isActive == true)
+  // );
+  const [kidXp, setKidXp] = useState(props.activeKid.xp);
+  const [kidConsecutiveDaysNb, setKidConsecutiveDaysNb] = useState(
+    props.activeKid.consecutiveDaysNb
   );
-  const [kidXp, setKidXp] = useState([]);
-  const [kidConsecutiveDaysNb, setKidConsecutiveDaysNb] = useState(Number);
   const [kidStatsResponse, setKidStatsResponse] = useState(false);
-
-  useEffect(() => {
-    async function getKidStats() {
-      var rawResponse = await fetch(
-        `${configUrl.url}/kids/byID/${activeKid.kidId}`
-      );
-      var response = await rawResponse.json();
-
-      setKidXp(response.kid.xp);
-      setKidConsecutiveDaysNb(response.kid.consecutiveDaysNb);
-      setKidStatsResponse(true);
-    }
-    getKidStats();
-  }, []);
 
   let graphLabels = [];
   let graphValues = [];
@@ -396,56 +367,36 @@ const Stats = (props) => {
     legend: ["Rainy Days"], // optional
   };
 
-  // const data = {
-  //   labels: ["January", "February", "March"],
-  //   datasets: [
-  //     {
-  //       data: [20, 45, 28],
-
-  //       //color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-  //       strokeWidth: 2, // optional
-  //     },
-  //   ],
-  //   legend: ["Rainy Days"], // optional
-  // };
-
-  if (!kidStatsResponse) {
-    return (
-      <View>
-        <Text>Chargement...</Text>
-      </View>
-    );
-  } else
-    return (
-      <View style={[styles.scene, { backgroundColor: "white" }]}>
-        <ScrollView>
-          <View style={styles.container}>
-            <Text style={styles.titleDash}>
-              Cockpit de {activeKid.kidFirstName}
-            </Text>
-            <Text style={styles.fonts} h4>
-              Suivez les progrès de votre enfant
-            </Text>
-            <Text style={styles.fonts} h5>
-              Niveau d'xp:
-            </Text>
-            <View style={styles.barChart}>
-              <BarChart
-                data={data}
-                width={300}
-                height={220}
-                chartConfig={styles.chartConfig}
-              />
-            </View>
-
-            <Text style={styles.fonts} h5>
-              Nombre de jours consécutifs:
-            </Text>
-            <Badge status="warning" value={kidConsecutiveDaysNb} />
+  return (
+    <View style={[styles.scene, { backgroundColor: "white" }]}>
+      <ScrollView>
+        <View style={styles.container}>
+          <Text style={styles.titleDash}>
+            Cockpit de {props.activeKid.kidFirstName}
+          </Text>
+          <Text style={styles.fonts} h4>
+            Suivez les progrès de votre enfant
+          </Text>
+          <Text style={styles.fonts} h5>
+            Niveau d'xp:
+          </Text>
+          <View style={styles.barChart}>
+            <BarChart
+              data={data}
+              width={300}
+              height={220}
+              chartConfig={styles.chartConfig}
+            />
           </View>
-        </ScrollView>
-      </View>
-    );
+
+          <Text style={styles.fonts} h5>
+            Nombre de jours consécutifs:
+          </Text>
+          <Badge status="warning" value={kidConsecutiveDaysNb} />
+        </View>
+      </ScrollView>
+    </View>
+  );
 };
 
 const initialLayout = { width: Dimensions.get("window").width };
@@ -686,9 +637,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
-    kidList: state.kidList,
-    kidActivatedNotionList: state.kidActivatedNotionList,
-    kidCustomWordsList: state.kidCustomWordsList,
+    activeKid: state.activeKid,
   };
 }
 
