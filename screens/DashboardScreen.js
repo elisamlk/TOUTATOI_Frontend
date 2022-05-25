@@ -101,7 +101,7 @@ const Personnalisation = (props) => {
   if (!allNotionsResponse || !kidNotionsResponse || !kidWordsReponse) {
     return (
       <View>
-        <Text>Chargememnt...</Text>
+        <Text>Chargement...</Text>
       </View>
     );
   }
@@ -173,8 +173,7 @@ const Personnalisation = (props) => {
           key={j}
           onPress={() => {
             OpenSubcategory(item);
-          }}
-        >
+          }}>
           <Text style={styles.button}>{item}</Text>
         </TouchableOpacity>
       );
@@ -188,8 +187,7 @@ const Personnalisation = (props) => {
           isVisible={isVisible}
           onBackdropPress={() => {
             handleBackdropPress();
-          }}
-        >
+          }}>
           <View>
             <Text>{openSubCategory}</Text>
           </View>
@@ -341,8 +339,7 @@ const Personnalisation = (props) => {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => addNewWord(newWord)}
-            >
+              onPress={() => addNewWord(newWord)}>
               <Text style={styles.fonts} flex-start>
                 Ajouter
               </Text>
