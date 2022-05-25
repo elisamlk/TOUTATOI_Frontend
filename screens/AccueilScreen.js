@@ -20,7 +20,7 @@ function AccueilScreen(props) {
       if (userData) {
         const getUser = async () => {
           let data = await fetch(
-            `${configUrl.url}/users/getUserByCode?codeFromFront=${userData}` //attention a bien remettre heroku
+            `${configUrl.url}/users/getUserByCode?codeFromFront=${userData}`
           );
           let response = await data.json();
           if (response.result) {
@@ -37,14 +37,12 @@ function AccueilScreen(props) {
     <View style={styles.container}>
       <Image
         style={styles.image}
-        source={require("../assets/logoTest.png")}
-      ></Image>
+        source={require("../assets/logoTest.png")}></Image>
 
       <View style={styles.buttonDisplay}>
         <TouchableOpacity
           style={styles.button1}
-          onPress={() => props.navigation.navigate("KidProfil")}
-        >
+          onPress={() => props.navigation.navigate("KidProfil")}>
           <Text style={styles.fonts} flex-start>
             C'est parti !
           </Text>
@@ -52,14 +50,12 @@ function AccueilScreen(props) {
 
         <TouchableOpacity
           style={styles.button2}
-          onPress={() => props.navigation.navigate("SignIn")}
-        >
+          onPress={() => props.navigation.navigate("SignIn")}>
           <Text style={styles.fonts}>J'ai un compte</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button2}
-          onPress={() => props.navigation.navigate("SignIn")}
-        >
+          onPress={() => props.navigation.navigate("SignIn")}>
           <Text style={styles.fonts}>Je suis invité</Text>
         </TouchableOpacity>
       </View>

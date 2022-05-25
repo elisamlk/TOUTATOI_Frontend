@@ -175,8 +175,7 @@ const Personnalisation = (props) => {
           key={j}
           onPress={() => {
             OpenSubcategory(item);
-          }}
-        >
+          }}>
           <Text style={styles.button}>{item}</Text>
         </TouchableOpacity>
       );
@@ -190,8 +189,7 @@ const Personnalisation = (props) => {
           isVisible={isVisible}
           onBackdropPress={() => {
             handleBackdropPress();
-          }}
-        >
+          }}>
           <View>
             <Text style={styles.subCategory}>{openSubCategory}</Text>
           </View>
@@ -342,8 +340,7 @@ const Personnalisation = (props) => {
 
             <TouchableOpacity
               style={configStyle.buttonList}
-              onPress={() => addNewWord(newWord)}
-            >
+              onPress={() => addNewWord(newWord)}>
               <Text style={configStyle.buttonFonts}>Ajouter</Text>
             </TouchableOpacity>
             <View style={configStyle.wordsListItem}>{wordsList}</View>
