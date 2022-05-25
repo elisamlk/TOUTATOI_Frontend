@@ -7,31 +7,25 @@ import configUrl from "../config/url.json";
 
 function SignInScreen(props) {
   const [email, setEmail] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(true);
   const [error, setError] = useState("");
 
   let submitMail = async () => {
-    console.log("SIGN IN email", email);
-
-    // let regex =
-    //   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    // if (email.match(regex)) {
-    //   setIsEmailValid(true);
-    // }
-    // console.log("SIGN isEmailValid =>", isEmailValid);
-
-    if (isEmailValid) {
-      var response = await fetch(`${configUrl.url}/users/submitMail`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `mailFromFront=${email}&isNew=false`,
-      });
-      let result = await response.json();
-
-      console.log("SIGN IN userId récupérée du backend =>", result.userId);
-
-      props.activeUser(result.userId);
-      props.navigation.navigate("ConfirmationCode");
+    if (email.length == 0) {
+      setError("Merci de renseigner un email");
+    } else if (email.length > 0) {
+      let regex = /^\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,3})+$/;
+      if (email.match(regex)) {
+        let response = await fetch(`${configUrl.url}/users/submitMail`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `mailFromFront=${email}&isNew=false`,
+        });
+        let result = await response.json();
+        props.activeUser(result.userId);
+        props.navigation.navigate("ConfirmationCode");
+      } else {
+        setError("L'email renseigné n'est pas au bon format");
+      }
     }
   };
 
@@ -45,12 +39,10 @@ function SignInScreen(props) {
           leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}
           onChangeText={(val) => setEmail(val)}
         />
+        <Text style={styles.error}>{error}</Text>
       </View>
-
-      <TouchableOpacity style={styles.button1}>
-        <Text style={styles.fonts} onPress={() => submitMail()}>
-          Continuer
-        </Text>
+      <TouchableOpacity style={styles.button1} onPress={() => submitMail()}>
+        <Text style={styles.fonts}>Continuer</Text>
       </TouchableOpacity>
     </View>
   );
@@ -98,6 +90,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+    fontFamily: "Lato_400Regular",
+    fontSize: 15,
+    marginTop: 10,
   },
 });
 

@@ -193,6 +193,7 @@ function HomeScreen(props) {
             <Text
               onPress={() => {
                 AsyncStorage.clear();
+                props.clearFirstKid();
                 props.navigation.navigate("Accueil");
               }}
               style={styles.fonts}
@@ -278,6 +279,9 @@ function mapDispatchToProps(dispatch) {
     },
     activeAKid: function (item) {
       dispatch({ type: "activeKid", item });
+    },
+    clearFirstKid: function () {
+      dispatch({ type: "clearFirstKid" });
     },
   };
 }

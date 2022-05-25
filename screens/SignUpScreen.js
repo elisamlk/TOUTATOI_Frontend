@@ -7,30 +7,25 @@ import configUrl from "../config/url.json";
 
 function SignUpScreen(props) {
   const [email, setEmail] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(true);
   const [error, setError] = useState("");
 
   let submitMail = async () => {
-    console.log("SIGN UP email =>", email);
-    // let regex =
-    //   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    // if (email.match(regex)) {
-    //   setIsEmailValid(true);
-    // }
-    // console.log("SIGN UP isEmailValid =>", isEmailValid);
-
-    if (isEmailValid) {
-      let response = await fetch(`${configUrl.url}/users/submitMail`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `mailFromFront=${email}&isNew=true`,
-      });
-      let result = await response.json();
-
-      console.log("userId récupérée du backend =>", result.userId);
-
-      props.activeUser(result.userId);
-      props.navigation.navigate("ConfirmationCode");
+    if (email.length == 0) {
+      setError("Merci de renseigner un email");
+    } else if (email.length > 0) {
+      let regex = /^\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,3})+$/;
+      if (email.match(regex)) {
+        let response = await fetch(`${configUrl.url}/users/submitMail`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `mailFromFront=${email}&isNew=true`,
+        });
+        let result = await response.json();
+        props.activeUser(result.userId);
+        props.navigation.navigate("ConfirmationCode");
+      } else {
+        setError("L'email renseigné n'est pas au bon format");
+      }
     }
   };
 
@@ -46,6 +41,7 @@ function SignUpScreen(props) {
           leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}
           onChangeText={(val) => setEmail(val)}
         />
+        <Text style={styles.error}>{error}</Text>
       </View>
 
       <Text style={styles.text}>
@@ -108,6 +104,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
     padding: 10,
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+    fontFamily: "Lato_400Regular",
+    fontSize: 15,
+    marginTop: 10,
   },
 });
 

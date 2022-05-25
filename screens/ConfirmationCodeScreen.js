@@ -7,13 +7,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function ConfirmationCodeScreen(props) {
   const [confCodeFromFront, setConfCodeFromFront] = useState("");
+  const [error, setError] = useState("");
 
   let submitCode = async () => {
-    console.log("confCodeFromFront", confCodeFromFront);
-    console.log("props.activeUser =>", props.activeUser);
-    console.log("props.firstKid =>", props.firstKid);
-
-    if (confCodeFromFront) {
+    if (confCodeFromFront.length == 0) {
+      console.log("14, il n'y pas de code renseigné");
+      setError("Merci de renseigner un code");
+    } else if (confCodeFromFront.length > 0) {
+      console.log("17, un code est renseigné, on commence les tests");
       let verifyCodeResponse = await fetch(
         `${configUrl.url}/users/submitConfirmationCode`,
         {
@@ -23,45 +24,32 @@ function ConfirmationCodeScreen(props) {
         }
       );
       let verifyCodeResult = await verifyCodeResponse.json();
-
-      console.log("verifyCodeResult =>", verifyCodeResult);
-      console.log("Est-ce que le code est bon? =>", verifyCodeResult.result);
-      console.log("newCveriFyCodeResult.code =>", verifyCodeResult.code);
-      console.log("props.firstkid.name.length =>", props.firstKid.name.length);
-
-      if (props.firstKid.name) {
-        console.log("il y a un enfant dans le reducer");
-        if (verifyCodeResult.result) {
-          let createKidResponse = await fetch(`${configUrl.url}/kids/addKid`, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `userIdFromFront=${props.activeUser}&firstNameFromFront=${props.firstKid.name}&gradeFromFront=${props.firstKid.grade}`,
-          });
-
-          let createKidResult = await createKidResponse.json();
-          console.log(
-            "Est-ce que le kid est créé ? =>",
-            createKidResult.result
-          );
-
-          if (createKidResult.result) {
-            AsyncStorage.setItem("code", confCodeFromFront);
-            props.navigation.navigate("BottomNavigator");
-          } else {
-            console.log(
-              "la création du kid n'a pas fonctionné. Erreur:",
-              createKidResult.error
-            );
-          }
+      if (verifyCodeResult.error.length > 0) {
+        console.log("28, le backend renvoie une erreur");
+        if ((verifyCodeResult.error.code = 3)) {
+          setError(verifyCodeResult.error[0].label);
+        } else if ((verifyCodeResult.error.code = 4)) {
+          setError(verifyCodeResult.error[0].label);
         }
-      } else {
-        if (verifyCodeResult.result) {
-          console.log("il n'y a pas d'enfant dans le reducer");
+      } else if (props.firstKid.name) {
+        console.log("35, le code est bon + il y a un kid dans le reducer");
+        let createKidResponse = await fetch(`${configUrl.url}/kids/addKid`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `userIdFromFront=${props.activeUser}&firstNameFromFront=${props.firstKid.name}&gradeFromFront=${props.firstKid.grade}`,
+        });
+        let createKidResult = await createKidResponse.json();
+        if (createKidResult.result) {
+          console.log("43, la création du kid a fonctionné");
           AsyncStorage.setItem("code", confCodeFromFront);
           props.navigation.navigate("BottomNavigator");
         } else {
-          console.log("le code n'est pas bon, pas de redirection");
+          console.log("48, la création du kid n'a pas fonctionné");
         }
+      } else {
+        console.log("le codes est bon + il n'y a pas de kid dans le reducer");
+        AsyncStorage.setItem("code", confCodeFromFront);
+        props.navigation.navigate("BottomNavigator");
       }
     }
   };
@@ -77,6 +65,7 @@ function ConfirmationCodeScreen(props) {
           placeholder="Code de confirmation"
           onChangeText={(val) => setConfCodeFromFront(val)}
         />
+        <Text style={styles.error}>{error}</Text>
       </View>
 
       <Text style={styles.text}>
@@ -139,6 +128,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
     padding: 10,
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+    fontFamily: "Lato_400Regular",
+    fontSize: 15,
+    marginTop: 10,
   },
 });
 

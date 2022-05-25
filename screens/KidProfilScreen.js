@@ -11,6 +11,7 @@ function KidProfilScreen(props) {
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
   const [value, setValue] = useState(null); /* classe de l'enfant (CP, CE1) */
+  const [error, setError] = useState("");
 
   const data = [
     { label: "CP", value: "1" },
@@ -36,6 +37,19 @@ function KidProfilScreen(props) {
     );
   };
 
+  function submitChild() {
+    if (name.length > 0 && grade.length > 0) {
+      props.addFirstKid(name, grade);
+      props.navigation.navigate("SignUp");
+    } else if (name.length == 0 && grade.length == 0) {
+      setError("Merci de renseigner un nom et une classe");
+    } else if (name.length == 0) {
+      setError("Merci de renseigner un nom");
+    } else if (grade.length == 0) {
+      setError("Merci de renseigner une classe");
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.h1}>Créez l'espace dédié à l'enfant</Text>
@@ -46,8 +60,6 @@ function KidProfilScreen(props) {
           placeholder="Prénom"
           onChangeText={(val) => setName(val)}
         />
-
-       
         <Text>Classe de l'enfant</Text>
         <Dropdown
           style={configStyle.dropdown}
@@ -78,6 +90,7 @@ function KidProfilScreen(props) {
           )}
           renderItem={renderItem}
         />
+        <Text style={styles.error}>{error}</Text>
       </View>
 
       <Text style={styles.text}>
@@ -87,7 +100,7 @@ function KidProfilScreen(props) {
         <TouchableOpacity
           style={styles.button1}
           onPress={() => {
-            props.addFirstKid(name, grade), props.navigation.navigate("SignUp");
+            submitChild();
           }}
         >
           <Text style={styles.fonts} flex-start>
@@ -153,6 +166,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
     padding: 10,
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+    fontFamily: "Lato_400Regular",
+    fontSize: 15,
+    marginTop: 10,
   },
 });
 
