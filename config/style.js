@@ -47,6 +47,42 @@ const configStyle = {
   inputSearchStyle: {
     display: "none",
   },
+  buttonList: {
+    width: 110,
+    color: "white",
+    backgroundColor: "#FFC9B9",
+    padding: 10,
+    marginRight: 10,
+    marginBottom: 10,
+    borderRadius: 20,
+  },
+  buttonFonts: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  inputList: {
+    width: 300,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 10,
+  },
+  words: {
+    flexDirection: "row",
+
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 15,
+    paddingTop: 10,
+    paddingRight: 5,
+    paddingLeft: 10,
+  },
+  wordsListItem: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
 };
 
 export default configStyle;

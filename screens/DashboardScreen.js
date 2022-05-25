@@ -18,6 +18,8 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { connect } from "react-redux";
 import configUrl from "../config/url.json";
 import { FontAwesome5 } from "@expo/vector-icons";
+import configStyle from "../config/style";
+import { ListItem } from "@rneui/themed";
 
 // Onglet personnalisation des notions
 const data = [
@@ -101,7 +103,7 @@ const Personnalisation = (props) => {
   if (!allNotionsResponse || !kidNotionsResponse || !kidWordsReponse) {
     return (
       <View>
-        <Text>Chargememnt...</Text>
+        <Text>Chargement...</Text>
       </View>
     );
   }
@@ -191,7 +193,7 @@ const Personnalisation = (props) => {
           }}
         >
           <View>
-            <Text>{openSubCategory}</Text>
+            <Text style={styles.subCategory}>{openSubCategory}</Text>
           </View>
           <View style={styles.notionNameDisplay}>{notionsToDisplay}</View>
         </Overlay>
@@ -235,8 +237,8 @@ const Personnalisation = (props) => {
 
   var wordsList = props.kidCustomWordsList.map((word, k) => {
     return (
-      <View key={k}>
-        <Text>{word.label}</Text>
+      <View style={configStyle.words} key={k}>
+        <Text style={configStyle.text}>{word.label}</Text>
         <Button
           buttonStyle={{
             height: 30,
@@ -293,10 +295,10 @@ const Personnalisation = (props) => {
     <View style={[styles.scene, { backgroundColor: "white" }]}>
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.fonts} h4>
+          <Text style={styles.titleDash}>
             Cockpit de {activeKid.kidFirstName}
           </Text>
-          <Text style={styles.fonts} h5>
+          <Text style={styles.fonts} h4>
             Aidez nous à personnaliser le programme de votre enfant !
           </Text>
           <View style={styles.dropdowncontainer}>
@@ -333,22 +335,18 @@ const Personnalisation = (props) => {
             <Card.Title style={styles.title}>Liste de mots</Card.Title>
 
             <Input
-              containerStyle={{ marginBottom: 25, width: "70%" }}
-              inputStyle={{ marginLeft: 10 }}
+              style={configStyle.inputList}
               placeholder="Ajoutez un mot à votre liste"
               onChangeText={(val) => setNewWord(val)}
             />
 
             <TouchableOpacity
-              style={styles.button}
+              style={configStyle.buttonList}
               onPress={() => addNewWord(newWord)}
             >
-              <Text style={styles.fonts} flex-start>
-                Ajouter
-              </Text>
+              <Text style={configStyle.buttonFonts}>Ajouter</Text>
             </TouchableOpacity>
-
-            {wordsList}
+            <View style={configStyle.wordsListItem}>{wordsList}</View>
           </View>
 
           {categoryCardList}
@@ -401,6 +399,19 @@ const Stats = (props) => {
     legend: ["Rainy Days"], // optional
   };
 
+  // const data = {
+  //   labels: ["January", "February", "March"],
+  //   datasets: [
+  //     {
+  //       data: [20, 45, 28],
+
+  //       //color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+  //       strokeWidth: 2, // optional
+  //     },
+  //   ],
+  //   legend: ["Rainy Days"], // optional
+  // };
+
   if (!kidStatsResponse) {
     return (
       <View>
@@ -412,25 +423,28 @@ const Stats = (props) => {
       <View style={[styles.scene, { backgroundColor: "white" }]}>
         <ScrollView>
           <View style={styles.container}>
-            <Text style={styles.fonts} h4>
+            <Text style={styles.titleDash}>
               Cockpit de {activeKid.kidFirstName}
             </Text>
-            <Text style={styles.fonts} h5>
+            <Text style={styles.fonts} h4>
               Suivez les progrès de votre enfant
             </Text>
             <Text style={styles.fonts} h5>
               Niveau d'xp:
             </Text>
-            <BarChart
-              data={data}
-              width={screenWidth}
-              height={220}
-              chartConfig={styles.chartConfig}
-            />
+            <View style={styles.barChart}>
+              <BarChart
+                data={data}
+                width={300}
+                height={220}
+                chartConfig={styles.chartConfig}
+              />
+            </View>
+
             <Text style={styles.fonts} h5>
               Nombre de jours consécutifs:
             </Text>
-            <Badge value={kidConsecutiveDaysNb} />
+            <Badge status="warning" value={kidConsecutiveDaysNb} />
           </View>
         </ScrollView>
       </View>
@@ -505,8 +519,8 @@ const styles = StyleSheet.create({
   wordCard: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "red",
-    height: 600,
+
+    backgroundColor: "#9CC5A1",
     borderRadius: 15,
     shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 1,
@@ -533,13 +547,25 @@ const styles = StyleSheet.create({
   scene: {
     flex: 1,
   },
-  fonts: {
+  titleDash: {
+    textAlign: "center",
     marginTop: 10,
     marginBottom: 8,
+    fontFamily: " Lato_400Regular",
+    fontSize: 25,
+  },
+  fonts: {
+    marginTop: 10,
+    marginBottom: 20,
     textAlign: "center",
   },
   title: {
     marginTop: 10,
+  },
+  subCategory: {
+    fontSize: 25,
+    textAlign: "center",
+    marginBottom: 10,
   },
   notionName: {
     flexDirection: "row",
@@ -552,7 +578,7 @@ const styles = StyleSheet.create({
     width: 270,
   },
   notionText: {
-    fontSize: 20,
+    fontSize: 15,
   },
   notionButtonDisplay: {
     flexDirection: "row",
@@ -566,9 +592,9 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   chartConfig: {
-    backgroundColor: "#e26a00",
-    backgroundGradientFrom: "#fb8c00",
-    backgroundGradientTo: "#ffa726",
+    backgroundColor: "#216869",
+    backgroundGradientFrom: "#216869",
+    backgroundGradientTo: "#216869",
     decimalPlaces: 2, // optional, defaults to 2dp
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -580,6 +606,9 @@ const styles = StyleSheet.create({
       strokeWidth: "2",
       stroke: "#ffa726",
     },
+  },
+  barChart: {
+    padding: 10,
   },
   overlay: {
     width: 200,
