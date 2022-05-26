@@ -52,15 +52,18 @@ function KidProfilScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.h1}>Créez l'espace dédié à l'enfant</Text>
-      <Text style={styles.h2}>Vous pourrez rajouter des profils plus tard</Text>
+      <Text style={configStyle.titleH1}>Créez l'espace dédié à l'enfant</Text>
+      <Text style={configStyle.fonts} h4>
+        Vous pourrez rajouter des profils plus tard
+      </Text>
       <View style={styles.containerForm}>
         <Input
           style={styles.input}
           placeholder="Prénom"
           onChangeText={(val) => setName(val)}
+          inputContainerStyle={{ borderBottomWidth: 0 }}
         />
-        <Text>Classe de l'enfant</Text>
+        <Text style={{marginBottom:10}}>Classe de l'enfant</Text>
         <Dropdown
           style={configStyle.dropdown}
           placeholderStyle={configStyle.placeholderStyle}

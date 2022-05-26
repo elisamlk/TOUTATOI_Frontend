@@ -4,6 +4,7 @@ import { Input } from "react-native-elements";
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import configUrl from "../config/url.json";
+import configStyle from "../config/style";
 
 function SignInScreen(props) {
   const [email, setEmail] = useState("");
@@ -31,10 +32,11 @@ function SignInScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.h1}>Renseignez votre adresse mail</Text>
+      <Text style={configStyle.titleH1}>Renseignez votre adresse mail</Text>
       <View style={styles.containerForm}>
         <Input
           style={styles.input}
+          inputContainerStyle={{ borderBottomWidth: 0 }}
           placeholder="laura@gmail.com"
           autoCapitalize="none"
           leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}

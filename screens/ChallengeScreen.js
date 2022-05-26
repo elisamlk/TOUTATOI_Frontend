@@ -17,8 +17,9 @@ function ChallengeScreen(props) {
 
   useEffect(() => {
     async function getChallenge() {
+      console.log("challenge pors", props.activeKid);
       var rawResponse = await fetch(
-        `${configUrl.url}/getChallengeOfTheDay?kidIdFromFront=${props.activeKid.kidId}`
+        `${configUrl.url}/getChallengeOfTheDay?kidIdFromFront=${props.activeKid.id}`
       );
       var response = await rawResponse.json();
       console.log("responsedufetch ", response);
@@ -37,7 +38,7 @@ function ChallengeScreen(props) {
     <Header
       placement="center"
       centerComponent={{
-        text: "Défi de " + props.activeKid.kidFirstName + " !",
+        text: "Défi de " + props.activeKid.firstName + " !",
         style: styles.défi,
       }}
       containerStyle={{
@@ -133,7 +134,7 @@ function ChallengeScreen(props) {
         }}
         title="TERMINER"
         onPress={() => {
-          props.postChallenge();
+          // props.postChallenge();
           async function pushResults() {
             console.log("liste results ", props.answerList);
             var rawResponse = await fetch(`${configUrl.url}/resultsOfTheDay`, {
@@ -142,11 +143,12 @@ function ChallengeScreen(props) {
                 "Content-Type": "application/x-www-form-urlencoded",
               },
               body: `challengeIdFromFront=${challenge._id}&kidIdFromFront=${
-                props.activeKid.kidId
+                props.activeKid.id
               }&resultListFromFront=${JSON.stringify(props.answerList)}`,
             });
             var response = await rawResponse.json();
             console.log("retour push answer ", response);
+            props.selectKid(response.savedKid);
             setPushResultsResponse(true);
           }
           pushResults();
@@ -164,9 +166,7 @@ function ChallengeScreen(props) {
         justifyContent: "space-evenly",
       }}
     >
-      <Text style={styles.titleDash}>
-        Défi de {props.activeKid.kidFirstName}
-      </Text>
+      <Text style={styles.titleDash}>Défi de {props.activeKid.firstName}</Text>
       <View style={styles.upperView}>
         <Text style={styles.funfact}>{challenge.funFact}</Text>
       </View>
@@ -267,16 +267,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#A6CFAB",
     borderRadius: 25,
     marginBottom: 10,
-    shadowOffset: { width: 5, height: 5 },
-    shadowRadius: 8,
-    elevation: 8,
-    shadowOpacity: 1,
   },
-  // questionCarte: {
-  //   // shadowOffset: { width: 5, height: 5 },
-  //   shadowRadius: 8,
-  //   elevation: 8,
-  // },
+
   questionNuméro: {
     display: "flex",
     flexDirection: "row",
@@ -315,6 +307,9 @@ function mapDispatchToProps(dispatch) {
     },
     postChallenge: function () {
       dispatch({ type: "postChallenge" });
+    },
+    selectKid: function (kid) {
+      dispatch({ type: "selectKid", kid });
     },
   };
 }

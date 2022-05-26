@@ -1,6 +1,7 @@
 const configStyle = {
   container: {
     alignItems: "center",
+    marginTop: 30,
   },
   header: {
     alignItems: "center",
@@ -15,10 +16,6 @@ const configStyle = {
     height: 75,
     backgroundColor: "white",
     borderRadius: 15,
-    shadowOffset: { width: 5, height: 5 },
-    shadowOpacity: 1,
-    shadowRadius: 8,
-    elevation: 8,
     paddingLeft: 16,
     paddingRight: 14,
     marginTop: 15,
@@ -39,6 +36,8 @@ const configStyle = {
     justifyContent: "space-around",
   },
   dropdown: {
+    marginTop:15,
+    marginBottom:15,
     height: 50,
     width: "70%",
     backgroundColor: "white",
@@ -100,6 +99,10 @@ const configStyle = {
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
     padding: 10,
+    fontSize: 15,
+  },
+  inputShare: {
+    fontSize: 15,
   },
   words: {
     flexDirection: "row",
@@ -114,6 +117,22 @@ const configStyle = {
   wordsListItem: {
     flexDirection: "row",
     flexWrap: "wrap",
+  },
+  titleH1: {
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 8,
+    fontFamily: "Lato_400Regular",
+    fontSize: 25,
+  },
+  textH6: {
+    fontSize: 17,
+    textAlign: "center",
+  },
+  fonts: {
+    marginTop: 10,
+    marginBottom: 20,
+    textAlign: "center",
   },
 };
 

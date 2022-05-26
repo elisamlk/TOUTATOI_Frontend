@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   Switch,
 } from "react-native";
-import { BarChart } from "react-native-chart-kit";
+//import { BarChart } from "react-native-chart-kit";
 import { Text, Card } from "@rneui/themed";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { Overlay, Badge, Input, Button } from "react-native-elements";
@@ -20,6 +20,8 @@ import configUrl from "../config/url.json";
 import { FontAwesome5 } from "@expo/vector-icons";
 import configStyle from "../config/style";
 // import { AntDesign } from '@expo/vector-icons';
+import { BarChart, XAxis } from "react-native-svg-charts";
+import * as scale from "d3-scale";
 
 import activeKid from "../reducers/activeKid";
 
@@ -112,7 +114,7 @@ const Personnalisation = (props) => {
     if (bddToUpdate == true) {
       async function updateKid() {
         var rawResponse = await fetch(
-          `${configUrl.url}/kids/KidActivatedNotions/${props.activeKid.kidId}`,
+          `${configUrl.url}/kids/KidActivatedNotions/${props.activeKid.id}`,
           {
             method: "PUT",
             headers: {
@@ -175,7 +177,7 @@ const Personnalisation = (props) => {
           }}
         >
           <View>
-            <Text style={styles.subCategory}>{openSubCategory}</Text>
+            <Text style={styles.title}>{openSubCategory}</Text>
           </View>
           <View style={styles.notionNameDisplay}>{notionsToDisplay}</View>
         </Overlay>
@@ -208,7 +210,7 @@ const Personnalisation = (props) => {
     props.deleteWord(word);
     async function updateKid() {
       var response = await fetch(
-        `${configUrl.url}/kids/deleteKidCustomWord/${props.activeKid.kidId}`,
+        `${configUrl.url}/kids/deleteKidCustomWord/${props.activeKid.id}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -226,18 +228,20 @@ const Personnalisation = (props) => {
         style={[
           configStyle.words,
           {
-            backgroundColor: "#FFC9B9",
-
+            backgroundColor: "white",
+            borderColor: "#FABE6D",
+            borderWidth: 0.3,
             alignItems: "center",
             justifyContent: "center",
             margin: windowWidth - windowWidth / 1.02,
             paddingLeft: 10,
             paddingRight: 10,
+            marginBottom: 15,
           },
         ]}
         key={k}
       >
-        <Text style={{ color: "#FABE6D" }}>{word.label}</Text>
+        <Text style={{ color: "black" }}>{word.label}</Text>
         <Button
           buttonStyle={{
             height: 30,
@@ -289,17 +293,17 @@ const Personnalisation = (props) => {
   };
 
   return (
-    <View style={[styles.scene, { backgroundColor: "white" }]}>
+    <View style={[styles.scene, {}]}>
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.titleDash}>
-            Cockpit de {props.activeKid.kidFirstName}
+          <Text style={configStyle.titleH1}>
+            Cockpit de {props.activeKid.firstName}
           </Text>
           <Text style={styles.fonts} h4>
             Aidez nous à personnaliser le programme de votre enfant !
           </Text>
           <View style={styles.dropdowncontainer}>
-            <Text>Classe de l'enfant </Text>
+            <Text style={configStyle.textH6}>Classe de l'enfant </Text>
             <Dropdown
               style={styles.dropdown}
               placeholderStyle={styles.placeholderStyle}
@@ -365,60 +369,68 @@ const Stats = (props) => {
   // const [activeKid, setActiveKid] = useState(
   //   props.kidList.find((e) => e.isActive == true)
   // );
-  const [kidXp, setKidXp] = useState(props.activeKid.xp);
-  const [kidConsecutiveDaysNb, setKidConsecutiveDaysNb] = useState(
-    props.activeKid.consecutiveDaysNb
-  );
+  // const [kidXp, setKidXp] = useState(props.activeKid.xp);
   const [kidStatsResponse, setKidStatsResponse] = useState(false);
+  const [graphValues, setGraphValues] = useState([]);
+  const [graphLabels, setGraphLabels] = useState([]);
 
-  let graphLabels = [];
-  let graphValues = [];
-  for (let element of kidXp) {
-    graphLabels.push(element.date);
-    graphValues.push(element.xpNb);
-  }
+  useEffect(() => {
+    (() => {
+      for (let element of props.activeKid.xp) {
+        setGraphValues([...graphValues, element.xpNb]);
+        setGraphLabels([...graphLabels, element.date]);
+      }
+    })();
+  }, [props.activeKid.xp]);
 
-  const data = {
-    //labels: graphLabels,
-    datasets: [
-      {
-        data: graphValues,
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-        strokeWidth: 2, // optional
-      },
-    ],
-    legend: ["Rainy Days"], // optional
-  };
+  // const data = {
+  //   //labels: graphLabels,
+  //   datasets: [
+  //     {
+  //       data: graphValues,
+  //       color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+  //       strokeWidth: 2, // optional
+  //     },
+  //   ],
+  //   legend: ["Rainy Days"], // optional
+  // };
+
+  // const data = [ 14, 80, 100, 55 ]
 
   return (
-    <View style={[styles.scene, { backgroundColor: "white" }]}>
+    <View style={[styles.scene, {}]}>
       <ScrollView style={styles.container}>
-        <Text style={styles.titleDash}>
-          Cockpit de {props.activeKid.kidFirstName}
+        <Text style={configStyle.titleH1}>
+          Cockpit de {props.activeKid.firstName}
         </Text>
         <Text style={styles.fonts} h4>
           Suivez les progrès de votre enfant
         </Text>
-        <Text style={styles.fonts} h5>
-          Niveau d'xp:
-        </Text>
+
         <View style={styles.barChart}>
-          <BarChart
-            style={{ borderRadius: 10, alignItems: "center" }}
+          {/* <BarChart
+            style={{ borderRadius: 10, alignItems: "center", marginBottom: 20 }}
             data={data}
             width={windowWidth - windowWidth / 9}
             height={windowHeight - windowHeight / 1.4}
             chartConfig={styles.chartConfig}
             // withHorizontalLabels={false}
             withInnerLines={true}
+          /> */}
+          <BarChart
+            style={{ flex: 1, height: 190 }}
+            data={graphValues}
+            gridMin={0}
+            svg={{ fill: "#FFDBD0" }}
           />
         </View>
         <View style={{ height: "50%" }}>
-          <Text style={styles.fonts} h5>
+          <Text style={styles.fonts} h4>
             Nombre de jours consécutifs:
           </Text>
           <Badge
             badgeStyle={{
+              marginTop: 15,
               width: 40,
               height: 40,
               borderRadius: 100,
@@ -426,7 +438,7 @@ const Stats = (props) => {
             }}
             textStyle={{ fontSize: 30 }}
             status="warning"
-            value={kidConsecutiveDaysNb}
+            value={props.activeKid.consecutiveDaysNb}
           />
         </View>
       </ScrollView>
@@ -455,8 +467,8 @@ const renderScene = SceneMap({
 function DashboardScreen(props) {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: props.dashboardSwitch.perso, title: "Personnalisation" },
-    { key: props.dashboardSwitch.stat, title: "Stat" },
+    { key: "first", title: "Personnalisation" },
+    { key: "second", title: "Stat" },
   ]);
 
   const renderTabBar = (props) => (
@@ -494,10 +506,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 15,
-    shadowOffset: { width: 5, height: 5 },
-    shadowOpacity: 1,
-    shadowRadius: 8,
-    elevation: 8,
+
     paddingLeft: 16,
     paddingRight: 14,
     marginTop: 15,
@@ -508,13 +517,8 @@ const styles = StyleSheet.create({
   wordCard: {
     alignItems: "center",
     justifyContent: "center",
-
     backgroundColor: "white",
     borderRadius: 15,
-    shadowOffset: { width: 5, height: 5 },
-    shadowOpacity: 1,
-    shadowRadius: 8,
-    elevation: 8,
     paddingLeft: 16,
     paddingRight: 14,
     marginTop: 15,
@@ -536,13 +540,7 @@ const styles = StyleSheet.create({
   scene: {
     flex: 1,
   },
-  titleDash: {
-    textAlign: "center",
-    marginTop: 10,
-    marginBottom: 8,
-    fontFamily: "Lato_400Regular",
-    fontSize: 25,
-  },
+
   fonts: {
     marginTop: 10,
     marginBottom: 20,
@@ -550,12 +548,11 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 10,
-  },
-  subCategory: {
-    fontSize: 25,
+    fontSize: 15,
+    fontFamily: "Lato_700Bold",
     textAlign: "center",
-    marginBottom: 10,
   },
+
   notionName: {
     flexDirection: "row",
     justifyContent: "space-between",

@@ -4,6 +4,7 @@ import { Input } from "react-native-elements";
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import configUrl from "../config/url.json";
+import configStyle from "../config/style";
 
 function SignUpScreen(props) {
   const [email, setEmail] = useState("");
@@ -31,11 +32,12 @@ function SignUpScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.h1}>
+      <Text style={configStyle.titleH1}>
         Inscrivez-vous pour jouer sur tous vos appareils
       </Text>
       <View style={styles.containerForm}>
         <Input
+          inputContainerStyle={{ borderBottomWidth: 0 }}
           style={styles.input}
           autoCapitalize="none"
           placeholder="Mail du parent"
