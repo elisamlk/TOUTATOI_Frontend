@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
     marginBottom: 8,
-    fontFamily: " Lato_400Regular",
+    fontFamily: "Lato_400Regular",
     fontSize: 25,
   },
   fonts: {
