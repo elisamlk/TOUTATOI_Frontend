@@ -4,6 +4,7 @@ import { Input } from "react-native-elements";
 import { connect } from "react-redux";
 import configUrl from "../config/url.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import configStyle from "../config/style";
 
 function ConfirmationCodeScreen(props) {
   const [confCodeFromFront, setConfCodeFromFront] = useState("");
@@ -56,11 +57,12 @@ function ConfirmationCodeScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.h1}>
+      <Text style={configStyle.titleH1}>
         Un code de confirmation vous a été envoyé par email
       </Text>
       <View style={styles.containerForm}>
         <Input
+          inputContainerStyle={{ borderBottomWidth: 0 }}
           style={styles.input}
           placeholder="Code de confirmation"
           onChangeText={(val) => setConfCodeFromFront(val)}

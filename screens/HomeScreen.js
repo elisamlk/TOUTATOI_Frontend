@@ -12,6 +12,7 @@ import { CardDivider } from "@rneui/base/dist/Card/Card.Divider";
 import configStyle from "../config/style";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { styles } from "react-native-element-dropdown/src/components/TextInput/styles";
 
 function HomeScreen(props) {
   const [isOverlayVisible, setIsOverlayVisible] = useState(false); //AFFICHAGE DE L'OVERLAY
@@ -184,16 +185,27 @@ function HomeScreen(props) {
           {shareButton}
         </View>
         <Overlay
-          overlayStyle={{ width: "70%", borderRadius: 15 }}
+          overlayStyle={{ width: "85%", borderRadius: 15 }}
           isVisible={isListVisible}
           onBackdropPress={() => {
             handleBackdropPress();
           }}
         >
-          <Text>Qui peut jouer avec {props.activeKid.kidFirstName}?</Text>
-          <Text>Ajouter des membres</Text>
+          <Text
+            style={{
+              textAlign: "center",
+              fontFamily: "Lato_700Bold",
+              marginBottom: 10,
+            }}
+          >
+            Qui peut jouer avec {props.activeKid.kidFirstName}?
+          </Text>
+          <Text style={{ textAlign: "center", fontFamily: "Lato_700Bold" }}>
+            Ajouter des membres
+          </Text>
 
           <Input
+            style={configStyle.inputShare}
             // containerStyle={{ marginBottom: 25 }}
             placeholder="ami@famille.fr"
             onChangeText={(val) => setEmail(val)}
@@ -272,41 +284,30 @@ function HomeScreen(props) {
 
   return (
     <View style={configStyle.container}>
-      <Header
-        placement="center"
-        centerComponent={{
-          text: "HOMEPAGE",
-          style: {
-            color: "#fff",
-            marginBottom: 5,
-          },
-        }}
-        containerStyle={{
-          backgroundColor: "#216869",
-        }}
-      />
       <ScrollView style={{ width: "100%", paddingHorizontal: 20 }}>
+        <Text style={configStyle.titleH1}>Sélectionnez un profil</Text>
         {kidsItem}
         <View style={configStyle.container}>
           <TouchableOpacity
             style={{
               borderRadius: 15,
-              shadowOffset: { width: 5, height: 5 },
-              shadowOpacity: 1,
-              shadowRadius: 8,
-              elevation: 8,
+              width: 220,
+              color: "white",
+
               backgroundColor: "#FFC9B9",
               marginTop: 30,
             }}
+            onPress={() => {
+              setIsVisible(true);
+            }}
           >
             <Text
-              onPress={() => {
-                setIsVisible(true);
-              }}
               style={{
                 margin: 10,
-                color: "grey",
+                fontWeight: "bold",
                 justifyContent: "center",
+                textAlign: "center",
+                color: "white",
               }}
             >
               Ajouter un nouveau profil enfant
@@ -315,22 +316,28 @@ function HomeScreen(props) {
           <TouchableOpacity
             style={{
               borderRadius: 15,
-              shadowOffset: { width: 5, height: 5 },
-              shadowOpacity: 1,
-              shadowRadius: 8,
-              elevation: 8,
+              width: 150,
+              color: "white",
+
+              backgroundColor: "#FFC9B9",
+              marginTop: 30,
+
               backgroundColor: "#216869",
-              marginTop: 50,
-              marginBottom: 100,
+            }}
+            onPress={() => {
+              AsyncStorage.clear();
+              props.clearFirstKid();
+              props.navigation.navigate("Accueil");
             }}
           >
             <Text
-              onPress={() => {
-                AsyncStorage.clear();
-                props.clearFirstKid();
-                props.navigation.navigate("Accueil");
+              style={{
+                margin: 10,
+                color: "white",
+                justifyContent: "center",
+                textAlign: "center",
+                fontWeight: "bold",
               }}
-              style={{ margin: 10, color: "white", justifyContent: "center" }}
             >
               Déconnexion
             </Text>
@@ -338,20 +345,38 @@ function HomeScreen(props) {
         </View>
       </ScrollView>
       <Overlay
-        overlayStyle={{ width: 280, borderRadius: 15 }}
+        overlayStyle={{ width: "85%", borderRadius: 15 }}
         isVisible={isVisible}
         onBackdropPress={() => {
           setIsVisible(false);
         }}
       >
-        <View>
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <Text
+            style={{
+              textAlign: "center",
+              fontFamily: "Lato_700Bold",
+              marginBottom: 10,
+            }}
+          >
+            Comment s'appelle l'enfant ?
+          </Text>
           <Input
+            style={configStyle.inputShare}
             containerStyle={{ marginBottom: 25 }}
-            placeholder="Comment s'appelle l'enfant ?"
+            placeholder="Laura"
             onChangeText={(val) => setKidName(val)}
           />
 
-          <Text>Classe de l'enfant </Text>
+          <Text
+            style={{
+              textAlign: "center",
+              fontFamily: "Lato_700Bold",
+              marginBottom: 10,
+            }}
+          >
+            Classe de l'enfant{" "}
+          </Text>
           <Dropdown
             style={configStyle.dropdown}
             placeholderStyle={configStyle.placeholderStyle}
@@ -363,7 +388,7 @@ function HomeScreen(props) {
             maxHeight={300}
             labelField="label"
             valueField="value"
-            placeholder="sélectionnez"
+            placeholder="Sélectionnez"
             searchPlaceholder="Search..."
             value={value}
             onChange={(item) => {
@@ -381,12 +406,36 @@ function HomeScreen(props) {
             renderItem={renderItem}
           />
 
-          <Button
+          <TouchableOpacity
+            style={{
+              borderRadius: 15,
+              width: 220,
+              color: "white",
+              justifyContent: "center",
+              backgroundColor: "#FFC9B9",
+              marginTop: 30,
+            }}
+            onPress={() => handleAddKid()}
+          >
+            <Text
+              style={{
+                margin: 10,
+                fontWeight: "bold",
+                justifyContent: "center",
+                textAlign: "center",
+                color: "white",
+              }}
+            >
+              Ajouter le profil enfant
+            </Text>
+          </TouchableOpacity>
+
+          {/* <Button
             title="Ajoutez le profil enfant"
             buttonStyle={{ backgroundColor: "#FFC9B9" }}
-            onPress={() => handleAddKid()}
+            
             type="solid"
-          />
+          /> */}
         </View>
       </Overlay>
     </View>
