@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { connect } from "react-redux";
-import { Header, Card, Button, Badge } from "react-native-elements";
+import { Header, Card, Button } from "react-native-elements";
 import configUrl from "../config/url.json";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { ButtonGroup } from "@rneui/themed";
 
 function ChallengeScreen(props) {
   const [challenge, setChallenge] = useState({});
-  const [activeKid, setActiveKid] = useState(
-    props.kidList.find((e) => e.isActive == true)
-  );
   const [questionList, setQuestionList] = useState([]);
   const [idQuestionToShow, setIdQuestionToShow] = useState(0);
   const [answerVisible, setAnswerVisible] = useState(false);
@@ -17,10 +15,9 @@ function ChallengeScreen(props) {
   const [pushResultsResponse, setPushResultsResponse] = useState(false);
 
   useEffect(() => {
-    setActiveKid(props.kidList.find((e) => e.isActive == true));
     async function getChallenge() {
       var rawResponse = await fetch(
-        `${configUrl.url}/getChallengeOfTheDay?kidIdFromFront=${activeKid.kidId}`
+        `${configUrl.url}/getChallengeOfTheDay?kidIdFromFront=${props.activeKid.kidId}`
       );
       var response = await rawResponse.json();
       console.log("responsedufetch ", response);
@@ -39,7 +36,7 @@ function ChallengeScreen(props) {
     <Header
       placement="center"
       centerComponent={{
-        text: "Défi de " + activeKid.kidFirstName + " !",
+        text: "Défi de " + props.activeKid.kidFirstName + " !",
         style: styles.défi,
       }}
       containerStyle={{
@@ -65,32 +62,35 @@ function ChallengeScreen(props) {
   }
   console.log("questiontoshow ", questionList[0]);
   let answer;
-  if (!answerVisible) {
-    answer = (
-      <Button
-        buttonStyle={{
-          backgroundColor: "#216869",
-          borderRadius: 15,
-        }}
-        titleStyle={{
-          fontFamily: "Lato_400Regular",
-          fontSize: 16,
-        }}
-        title="Voir la réponse"
-        onPress={() => {
-          setAnswerVisible(!answerVisible);
-        }}
-      />
-    );
-  } else {
-    answer = (
-      <Text
-        onPress={() => {
-          setAnswerVisible(!answerVisible);
-        }}>
-        {questionList[idQuestionToShow].answerLabel}
-      </Text>
-    );
+  if (questionList[idQuestionToShow].answerLabel) {
+    if (!answerVisible) {
+      answer = (
+        <Button
+          buttonStyle={{
+            backgroundColor: "#216869",
+            borderRadius: 15,
+          }}
+          titleStyle={{
+            fontFamily: "Lato_400Regular",
+            fontSize: 12,
+          }}
+          title="Voir la réponse"
+          onPress={() => {
+            setAnswerVisible(!answerVisible);
+          }}
+        />
+      );
+    } else {
+      answer = (
+        <Text
+          onPress={() => {
+            setAnswerVisible(!answerVisible);
+          }}
+        >
+          {questionList[idQuestionToShow].answerLabel}
+        </Text>
+      );
+    }
   }
 
   function handleAnswer(questionId, result) {
@@ -111,13 +111,13 @@ function ChallengeScreen(props) {
     <Button
       buttonStyle={{
         backgroundColor: "#FABE6D",
-        borderRadius: "15",
+        borderRadius: 15,
         opacity: opacityCondition,
         marginBottom: 75,
       }}
       titleStyle={{
         fontFamily: "Lato_400Regular",
-        fontSize: 16,
+        fontSize: 12,
       }}
       title="Terminer"
       onPress={() => {
@@ -129,7 +129,7 @@ function ChallengeScreen(props) {
               "Content-Type": "application/x-www-form-urlencoded",
             },
             body: `challengeIdFromFront=${challenge._id}&kidIdFromFront=${
-              activeKid.kidId
+              props.activeKid.kidId
             }&resultListFromFront=${JSON.stringify(props.answerList)}`,
           });
           var response = await rawResponse.json();
@@ -140,9 +140,6 @@ function ChallengeScreen(props) {
       }}
     />
   );
-  /*  } */
-
-  let iconName = "numeric-" + (idQuestionToShow + 1) + "-circle-outline";
 
   return (
     <View>
@@ -152,7 +149,12 @@ function ChallengeScreen(props) {
           <Text style={styles.funfact}>{challenge.funFact}</Text>
         </View>
         <View style={styles.questionCarte}>
-          <Card containerStyle={{ borderRadius: 25, padding: 0 }}>
+          <Card
+            containerStyle={{
+              borderRadius: 25,
+              padding: 0,
+            }}
+          >
             <View style={styles.questionNuméro}>
               <Button
                 buttonStyle={{
@@ -161,11 +163,7 @@ function ChallengeScreen(props) {
                   marginLeft: 10,
                 }}
                 icon={
-                  <MaterialCommunityIcons
-                    name={iconName}
-                    size={30}
-                    color="white"
-                  />
+                  <FontAwesome name="question-circle" size={30} color="white" />
                 }
               />
               <Text style={{ fontFamily: "Lato_700Bold", color: "white" }}>
@@ -182,11 +180,12 @@ function ChallengeScreen(props) {
                 style={{
                   justifyContent: "center",
                   flexDirection: "row",
-                }}>
+                }}
+              >
                 <Button
                   buttonStyle={{
                     backgroundColor: "#49A078",
-                    borderRadius: "15",
+                    borderRadius: 15,
                     width: "100%",
                     marginVertical: 10,
                     height: 40,
@@ -197,13 +196,20 @@ function ChallengeScreen(props) {
                   }}
                   title="   Bonne réponse   "
                   onPress={() => {
-                    handleAnswer(questionList[idQuestionToShow]._id, 1);
+                    if (questionList[idQuestionToShow]._id) {
+                      handleAnswer(questionList[idQuestionToShow]._id, 1);
+                    } else {
+                      handleAnswer(
+                        `_${questionList[idQuestionToShow].wordId}`,
+                        1
+                      );
+                    }
                   }}
                 />
                 <Button
                   buttonStyle={{
                     backgroundColor: "#FFC9B9",
-                    borderRadius: "15",
+                    borderRadius: 15,
                     width: "100%",
                     marginVertical: 10,
                     height: 40,
@@ -214,7 +220,14 @@ function ChallengeScreen(props) {
                   }}
                   title="Mauvaise réponse"
                   onPress={() => {
-                    handleAnswer(questionList[idQuestionToShow]._id, 0);
+                    if (questionList[idQuestionToShow]._id) {
+                      handleAnswer(questionList[idQuestionToShow]._id, 0);
+                    } else {
+                      handleAnswer(
+                        `_${questionList[idQuestionToShow].wordId}`,
+                        0
+                      );
+                    }
                   }}
                 />
               </View>
@@ -238,7 +251,7 @@ const styles = StyleSheet.create({
   },
   funfact: {
     fontFamily: "Lato_400Regular",
-    textAlign: "justify",
+
     marginHorizontal: 20,
     marginVertical: 10,
   },
@@ -263,19 +276,22 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     height: "15%",
-    borderTopLeftRadius: "15",
-    borderTopRightRadius: "15",
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   downButtonsView: {
     display: "flex",
     flexDirection: "column-reverse",
-    marginTop: "50%",
+    marginTop: "20%",
     marginHorizontal: "25%",
   },
 });
 
 function mapStateToProps(state) {
-  return { kidList: state.kidList, answerList: state.answerList };
+  return {
+    answerList: state.answerList,
+    activeKid: state.activeKid,
+  };
 }
 
 function mapDispatchToProps(dispatch) {

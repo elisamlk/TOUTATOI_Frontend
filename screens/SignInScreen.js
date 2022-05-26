@@ -36,6 +36,7 @@ function SignInScreen(props) {
         <Input
           style={styles.input}
           placeholder="laura@gmail.com"
+          autoCapitalize="none"
           leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}
           onChangeText={(val) => setEmail(val)}
         />
