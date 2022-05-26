@@ -21,6 +21,9 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import configStyle from "../config/style";
 import { ListItem } from "@rneui/themed";
 
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
+
 // Onglet personnalisation des notions
 const data = [
   { label: "CP", value: "1" },
@@ -175,7 +178,8 @@ const Personnalisation = (props) => {
           key={j}
           onPress={() => {
             OpenSubcategory(item);
-          }}>
+          }}
+        >
           <Text style={styles.button}>{item}</Text>
         </TouchableOpacity>
       );
@@ -189,7 +193,8 @@ const Personnalisation = (props) => {
           isVisible={isVisible}
           onBackdropPress={() => {
             handleBackdropPress();
-          }}>
+          }}
+        >
           <View>
             <Text style={styles.subCategory}>{openSubCategory}</Text>
           </View>
@@ -235,17 +240,29 @@ const Personnalisation = (props) => {
 
   var wordsList = props.kidCustomWordsList.map((word, k) => {
     return (
-      <View style={configStyle.words} key={k}>
-        <Text style={configStyle.text}>{word.label}</Text>
+      <View
+        style={[
+          configStyle.words,
+          {
+            backgroundColor: "#FFC9B9",
+
+            alignItems: "center",
+            justifyContent: "center",
+            margin: windowWidth - windowWidth / 1.02,
+            paddingLeft: 10,
+            paddingRight: 10,
+          },
+        ]}
+        key={k}
+      >
+        <Text style={{ color: "white" }}>{word.label}</Text>
         <Button
           buttonStyle={{
             height: 30,
             width: 30,
-            borderRadius: 50,
-            backgroundColor: "#FABE6D",
+            backgroundColor: "transparent",
           }}
-          containerStyle={{ paddingTop: 12 }}
-          icon={<FontAwesome5 name="trash" size={12} color="white" />}
+          icon={<FontAwesome5 name="trash" size={15} color="white" />}
           // disabled={isSelected !== i ? true : false}
           // disabledStyle={{ backgroundColor: "grey" }}
           onPress={() => deleteWord(word.label)}
@@ -334,13 +351,15 @@ const Personnalisation = (props) => {
 
             <Input
               style={configStyle.inputList}
+              inputContainerStyle={{ borderBottomWidth: 0 }}
               placeholder="Ajoutez un mot à votre liste"
               onChangeText={(val) => setNewWord(val)}
             />
 
             <TouchableOpacity
               style={configStyle.buttonList}
-              onPress={() => addNewWord(newWord)}>
+              onPress={() => addNewWord(newWord)}
+            >
               <Text style={configStyle.buttonFonts}>Ajouter</Text>
             </TouchableOpacity>
             <View style={configStyle.wordsListItem}>{wordsList}</View>
@@ -431,10 +450,13 @@ const Stats = (props) => {
             </Text>
             <View style={styles.barChart}>
               <BarChart
+                style={{ borderRadius: 10, alignItems: "center" }}
                 data={data}
-                width={300}
-                height={220}
+                width={windowWidth - windowWidth / 9}
+                height={windowHeight - windowHeight / 1.4}
                 chartConfig={styles.chartConfig}
+                withHorizontalLabels={false}
+                withInnerLines={true}
               />
             </View>
 
@@ -477,7 +499,10 @@ function DashboardScreen(props) {
       {...props}
       activeColor={"white"}
       inactiveColor={"#FFC9B9"}
-      style={{ backgroundColor: "#216869" }}
+      style={{
+        backgroundColor: "#216869",
+        paddingTop: windowHeight - windowHeight / 1.04,
+      }}
     />
   );
 
@@ -496,6 +521,8 @@ function DashboardScreen(props) {
 const styles = StyleSheet.create({
   container: {
     marginTop: StatusBar.currentHeight,
+    width: windowWidth,
+    // marginTop : windowHeight - windowHeight/1.03
   },
   card: {
     alignItems: "center",
@@ -548,7 +575,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
     marginBottom: 8,
-    fontFamily: " Lato_400Regular",
+    // fontFamily: "Lato_400Regular",
     fontSize: 25,
   },
   fonts: {
@@ -593,11 +620,9 @@ const styles = StyleSheet.create({
     backgroundGradientFrom: "#216869",
     backgroundGradientTo: "#216869",
     decimalPlaces: 2, // optional, defaults to 2dp
-    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    style: {
-      borderRadius: 16,
-    },
+    color: () => `#9CC5A1`,
+    labelColor: () => "#9CC5A1",
+
     propsForDots: {
       r: "6",
       strokeWidth: "2",

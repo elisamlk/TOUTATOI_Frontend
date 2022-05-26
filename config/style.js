@@ -70,7 +70,6 @@ const configStyle = {
   },
   words: {
     flexDirection: "row",
-
     alignItems: "center",
   },
   text: {
