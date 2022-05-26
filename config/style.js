@@ -27,8 +27,8 @@ const configStyle = {
     marginRight: 16,
   },
   trashbutton: {
-    height: 30,
-    width: 30,
+    height: 25,
+    width: 25,
     borderRadius: 50,
     backgroundColor: "grey",
   },
@@ -81,13 +81,13 @@ const configStyle = {
     display: "none",
   },
   buttonList: {
-    width: 110,
+    width: 40,
     color: "white",
     backgroundColor: "#FFC9B9",
     padding: 10,
     marginRight: 10,
     marginBottom: 10,
-    borderRadius: 20,
+    borderRadius: 100,
   },
   buttonFonts: {
     color: "white",
@@ -103,7 +103,6 @@ const configStyle = {
   },
   words: {
     flexDirection: "row",
-
     alignItems: "center",
   },
   text: {

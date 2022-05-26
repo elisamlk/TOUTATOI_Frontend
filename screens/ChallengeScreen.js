@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { connect } from "react-redux";
-import { Header, Card, Button, Badge } from "react-native-elements";
+import { Header, Card, Button } from "react-native-elements";
 import configUrl from "../config/url.json";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { ButtonGroup } from "@rneui/themed";
 
 function ChallengeScreen(props) {
   const [challenge, setChallenge] = useState({});
@@ -12,6 +13,7 @@ function ChallengeScreen(props) {
   const [answerVisible, setAnswerVisible] = useState(false);
   const [challengeResponse, setChallengeResponse] = useState(false);
   const [pushResultsResponse, setPushResultsResponse] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
   useEffect(() => {
     async function getChallenge() {
@@ -41,7 +43,7 @@ function ChallengeScreen(props) {
       containerStyle={{
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#216869",
+        backgroundColor: "transparent",
         marginBottom: 10,
       }}
     />
@@ -65,13 +67,16 @@ function ChallengeScreen(props) {
     if (!answerVisible) {
       answer = (
         <Button
+          containerStyle={{
+            width: 150,
+          }}
           buttonStyle={{
-            backgroundColor: "#216869",
-            // borderRadius: 15,
+            backgroundColor: "#FFDBD0",
           }}
           titleStyle={{
             fontFamily: "Lato_400Regular",
-            fontSize: 16,
+            color: "black",
+            fontSize: 12,
           }}
           title="Voir la réponse"
           onPress={() => {
@@ -82,6 +87,7 @@ function ChallengeScreen(props) {
     } else {
       answer = (
         <Text
+          style={{ color: "#216869" }}
           onPress={() => {
             setAnswerVisible(!answerVisible);
           }}
@@ -92,156 +98,149 @@ function ChallengeScreen(props) {
     }
   }
 
+  function clickAnswer(value) {
+    setSelectedIndex(value);
+    if (questionList[idQuestionToShow]._id) {
+      handleAnswer(questionList[idQuestionToShow]._id, value);
+    } else {
+      handleAnswer(`_${questionList[idQuestionToShow].wordId}`, value);
+    }
+  }
+
   function handleAnswer(questionId, result) {
     props.addAnswer({ questionId: questionId, result: result });
     if (idQuestionToShow < questionList.length - 1) {
       setIdQuestionToShow(idQuestionToShow + 1);
+      setSelectedIndex(null);
       setAnswerVisible(false);
     }
   }
 
-  let opacityCondition;
+  let validateButton;
   if (idQuestionToShow == questionList.length - 1) {
-    opacityCondition = 100;
-  } else {
-    opacityCondition = 0;
+    validateButton = (
+      <Button
+        buttonStyle={{
+          width: 150,
+          backgroundColor: "#FFDBD0",
+          // marginTop: 10,
+          alignSelf: "center",
+        }}
+        titleStyle={{
+          fontFamily: "Lato_400Regular",
+          fontSize: 12,
+          color: "black",
+        }}
+        title="TERMINER"
+        onPress={() => {
+          props.postChallenge();
+          async function pushResults() {
+            console.log("liste results ", props.answerList);
+            var rawResponse = await fetch(`${configUrl.url}/resultsOfTheDay`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: `challengeIdFromFront=${challenge._id}&kidIdFromFront=${
+                props.activeKid.kidId
+              }&resultListFromFront=${JSON.stringify(props.answerList)}`,
+            });
+            var response = await rawResponse.json();
+            console.log("retour push answer ", response);
+            setPushResultsResponse(true);
+          }
+          pushResults();
+        }}
+      />
+    );
   }
-  let validateButton = (
-    <Button
-      buttonStyle={{
-        backgroundColor: "#FABE6D",
-        // borderRadius: "15",
-        opacity: opacityCondition,
-        marginBottom: 75,
-      }}
-      titleStyle={{
-        fontFamily: "Lato_400Regular",
-        fontSize: 16,
-      }}
-      title="Terminer"
-      onPress={() => {
-        async function pushResults() {
-          console.log("liste results ", props.answerList);
-          var rawResponse = await fetch(`${configUrl.url}/resultsOfTheDay`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: `challengeIdFromFront=${challenge._id}&kidIdFromFront=${
-              props.activeKid.kidId
-            }&resultListFromFront=${JSON.stringify(props.answerList)}`,
-          });
-          var response = await rawResponse.json();
-          console.log("retour push answer ", response);
-          setPushResultsResponse(true);
-        }
-        pushResults();
-      }}
-    />
-  );
-  /*  } */
-
-  let iconName = "numeric-" + (idQuestionToShow + 1) + "-circle-outline";
 
   return (
-    <View>
-      {header}
-      <ScrollView style={{ width: "100%", paddingHorizontal: 20 }}>
-        <View style={styles.upperView}>
-          <Text style={styles.funfact}>{challenge.funFact}</Text>
+    <View
+      style={{
+        flex: 1,
+        padding: 25,
+        flexDirection: "column",
+        justifyContent: "space-evenly",
+      }}
+    >
+      <Text style={styles.titleDash}>
+        Défi de {props.activeKid.kidFirstName}
+      </Text>
+      <View style={styles.upperView}>
+        <Text style={styles.funfact}>{challenge.funFact}</Text>
+      </View>
+      <Card
+        containerStyle={{
+          borderRadius: 25,
+          borderWidth: 0,
+          padding: 0,
+          flexDirection: "column",
+        }}
+        wrapperStyle={{ padding: 0, margin: 0, justifyContent: "flex-end" }}
+      >
+        <View style={styles.questionNuméro}>
+          <Button
+            buttonStyle={{
+              backgroundColor: "#216869",
+              marginRight: 5,
+              marginLeft: 10,
+            }}
+            icon={
+              <FontAwesome name="question-circle" size={30} color="white" />
+            }
+          />
+          <Text style={{ fontFamily: "Lato_700Bold", color: "white" }}>
+            {"QUESTION " + (idQuestionToShow + 1)}
+          </Text>
         </View>
-        <View style={styles.questionCarte}>
-          <Card
-            containerStyle={{
-              // borderRadius: 25,
-              padding: 0,
+        {/* <Card.Divider /> */}
+        <View
+          style={{
+            height: 150,
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "Lato_400Regular",
+              textAlign: "center",
             }}
           >
-            <View style={styles.questionNuméro}>
-              <Button
-                buttonStyle={{
-                  backgroundColor: "#216869",
-                  marginRight: 5,
-                  marginLeft: 10,
-                }}
-                icon={
-                  <MaterialCommunityIcons
-                    name={iconName}
-                    size={30}
-                    color="white"
-                  />
-                }
-              />
-              <Text style={{ fontFamily: "Lato_700Bold", color: "white" }}>
-                {"QUESTION " + (idQuestionToShow + 1)}
-              </Text>
-            </View>
-            <Card.Divider />
-            <Text style={styles.funfact}>
-              {questionList[idQuestionToShow].questionLabel}
-            </Text>
-            <View style={styles.downButtonsView}>
-              {validateButton}
-              <View
-                style={{
-                  justifyContent: "center",
-                  flexDirection: "row",
-                }}
-              >
-                <Button
-                  buttonStyle={{
-                    backgroundColor: "#49A078",
-                    // borderRadius: "15",
-                    width: "100%",
-                    marginVertical: 10,
-                    height: 40,
-                  }}
-                  titleStyle={{
-                    fontFamily: "Lato_400Regular",
-                    fontSize: 12,
-                  }}
-                  title="   Bonne réponse   "
-                  onPress={() => {
-                    if (questionList[idQuestionToShow]._id) {
-                      handleAnswer(questionList[idQuestionToShow]._id, 1);
-                    } else {
-                      handleAnswer(
-                        `_${questionList[idQuestionToShow].wordId}`,
-                        1
-                      );
-                    }
-                  }}
-                />
-                <Button
-                  buttonStyle={{
-                    backgroundColor: "#FFC9B9",
-                    // borderRadius: "15",
-                    width: "100%",
-                    marginVertical: 10,
-                    height: 40,
-                  }}
-                  titleStyle={{
-                    fontFamily: "Lato_400Regular",
-                    fontSize: 12,
-                  }}
-                  title="Mauvaise réponse"
-                  onPress={() => {
-                    if (questionList[idQuestionToShow]._id) {
-                      handleAnswer(questionList[idQuestionToShow]._id, 0);
-                    } else {
-                      handleAnswer(
-                        `_${questionList[idQuestionToShow].wordId}`,
-                        0
-                      );
-                    }
-                  }}
-                />
-              </View>
-              {answer}
-            </View>
-          </Card>
+            {questionList[idQuestionToShow].questionLabel}
+          </Text>
+          {answer}
         </View>
-      </ScrollView>
+        <ButtonGroup
+          buttons={["Mauvaise réponse", "Bonne réponse"]}
+          selectedIndex={selectedIndex}
+          textStyle={{ color: "black", fontSize: 12 }}
+          selectedButtonStyle={{ backgroundColor: "#216869" }}
+          containerStyle={{
+            borderBottomLeftRadius: 25,
+            borderBottomRightRadius: 25,
+            backgroundColor: "#FFDBD0",
+            width: "100%",
+            alignSelf: "center",
+            alignItems: "flex-end",
+            marginBottom: 0,
+            padding: 0,
+            borderWidth: 0,
+          }}
+          buttonContainerStyle={{
+            padding: 0,
+            margin: 0,
+            justifyContent: "flex-end",
+          }}
+          buttonStyle={{ padding: 0, margin: 0, color: "white" }}
+          onPress={(value) => {
+            clickAnswer(value);
+          }}
+        />
+      </Card>
+      {validateButton}
     </View>
   );
 }
@@ -250,46 +249,55 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     textAlign: "center",
+    alignItems: "center",
+    padding: 25,
   },
   défi: {
+    color: "black",
     fontFamily: "Lato_400Regular",
-    color: "white",
+    fontSize: 25,
   },
   funfact: {
     fontFamily: "Lato_400Regular",
-    textAlign: "justify",
+    color: "black",
     marginHorizontal: 20,
-    marginVertical: 10,
+    marginVertical: 20,
   },
   upperView: {
-    backgroundColor: "#FABE6D",
-    // borderRadius: 25,
+    backgroundColor: "#A6CFAB",
+    borderRadius: 25,
     marginBottom: 10,
     shadowOffset: { width: 5, height: 5 },
     shadowRadius: 8,
     elevation: 8,
     shadowOpacity: 1,
   },
-  questionCarte: {
-    shadowOffset: { width: 5, height: 5 },
-    shadowRadius: 8,
-    elevation: 8,
-  },
+  // questionCarte: {
+  //   // shadowOffset: { width: 5, height: 5 },
+  //   shadowRadius: 8,
+  //   elevation: 8,
+  // },
   questionNuméro: {
     display: "flex",
     flexDirection: "row",
     backgroundColor: "#216869",
     width: "100%",
     alignItems: "center",
-    height: "15%",
-    // borderTopLeftRadius: "15",
-    // borderTopRightRadius: "15",
+    height: 50,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   downButtonsView: {
-    display: "flex",
-    flexDirection: "column-reverse",
-    marginTop: "50%",
+    flexDirection: "row",
+    marginTop: "20%",
     marginHorizontal: "25%",
+  },
+  titleDash: {
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 8,
+    fontFamily: "Lato_400Regular",
+    fontSize: 25,
   },
 });
 
@@ -304,6 +312,9 @@ function mapDispatchToProps(dispatch) {
   return {
     addAnswer: function (answer) {
       dispatch({ type: "addanswer", answer });
+    },
+    postChallenge: function () {
+      dispatch({ type: "postChallenge" });
     },
   };
 }

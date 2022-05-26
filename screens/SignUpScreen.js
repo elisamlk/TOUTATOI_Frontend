@@ -37,6 +37,7 @@ function SignUpScreen(props) {
       <View style={styles.containerForm}>
         <Input
           style={styles.input}
+          autoCapitalize="none"
           placeholder="Mail du parent"
           leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}
           onChangeText={(val) => setEmail(val)}

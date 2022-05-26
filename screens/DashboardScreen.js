@@ -19,8 +19,12 @@ import { connect } from "react-redux";
 import configUrl from "../config/url.json";
 import { FontAwesome5 } from "@expo/vector-icons";
 import configStyle from "../config/style";
+// import { AntDesign } from '@expo/vector-icons';
 
 import activeKid from "../reducers/activeKid";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 // Onglet personnalisation des notions
 const data = [
@@ -196,6 +200,7 @@ const Personnalisation = (props) => {
         let result = await response.json();
       }
       updateKid();
+      setNewWord("");
     }
   };
 
@@ -217,17 +222,29 @@ const Personnalisation = (props) => {
 
   var wordsList = props.activeKid.customWords.map((word, k) => {
     return (
-      <View style={configStyle.words} key={k}>
-        <Text style={configStyle.text}>{word.label}</Text>
+      <View
+        style={[
+          configStyle.words,
+          {
+            backgroundColor: "#FFC9B9",
+
+            alignItems: "center",
+            justifyContent: "center",
+            margin: windowWidth - windowWidth / 1.02,
+            paddingLeft: 10,
+            paddingRight: 10,
+          },
+        ]}
+        key={k}
+      >
+        <Text style={{ color: "#FABE6D" }}>{word.label}</Text>
         <Button
           buttonStyle={{
             height: 30,
             width: 30,
-            borderRadius: 50,
-            backgroundColor: "#FABE6D",
+            backgroundColor: "transparent",
           }}
-          containerStyle={{ paddingTop: 12 }}
-          icon={<FontAwesome5 name="trash" size={12} color="white" />}
+          icon={<FontAwesome5 name="trash" size={15} color="#FABE6D" />}
           // disabled={isSelected !== i ? true : false}
           // disabledStyle={{ backgroundColor: "grey" }}
           onPress={() => clicktrash(word.label)}
@@ -316,16 +333,21 @@ const Personnalisation = (props) => {
 
             <Input
               style={configStyle.inputList}
+              // inputContainerStyle={{ borderBottomWidth: 0 }}
               placeholder="Ajoutez un mot à votre liste"
+              autoCapitalize="none"
+              rightIcon={
+                <AntDesign
+                  name="pluscircle"
+                  size={24}
+                  color="#FABE6D"
+                  onPress={() => clickAdd(newWord)}
+                />
+              }
               onChangeText={(val) => setNewWord(val)}
+              value={newWord}
             />
 
-            <TouchableOpacity
-              style={configStyle.buttonList}
-              onPress={() => clickAdd(newWord)}
-            >
-              <Text style={configStyle.buttonFonts}>Ajouter</Text>
-            </TouchableOpacity>
             <View style={configStyle.wordsListItem}>{wordsList}</View>
           </View>
 
@@ -357,6 +379,7 @@ const Stats = (props) => {
   }
 
   const data = {
+    //labels: graphLabels,
     datasets: [
       {
         data: graphValues,
@@ -369,30 +392,42 @@ const Stats = (props) => {
 
   return (
     <View style={[styles.scene, { backgroundColor: "white" }]}>
-      <ScrollView>
-        <View style={styles.container}>
-          <Text style={styles.titleDash}>
-            Cockpit de {props.activeKid.kidFirstName}
-          </Text>
-          <Text style={styles.fonts} h4>
-            Suivez les progrès de votre enfant
-          </Text>
-          <Text style={styles.fonts} h5>
-            Niveau d'xp:
-          </Text>
-          <View style={styles.barChart}>
-            <BarChart
-              data={data}
-              width={300}
-              height={220}
-              chartConfig={styles.chartConfig}
-            />
-          </View>
-
+      <ScrollView style={styles.container}>
+        <Text style={styles.titleDash}>
+          Cockpit de {props.activeKid.kidFirstName}
+        </Text>
+        <Text style={styles.fonts} h4>
+          Suivez les progrès de votre enfant
+        </Text>
+        <Text style={styles.fonts} h5>
+          Niveau d'xp:
+        </Text>
+        <View style={styles.barChart}>
+          <BarChart
+            style={{ borderRadius: 10, alignItems: "center" }}
+            data={data}
+            width={windowWidth - windowWidth / 9}
+            height={windowHeight - windowHeight / 1.4}
+            chartConfig={styles.chartConfig}
+            // withHorizontalLabels={false}
+            withInnerLines={true}
+          />
+        </View>
+        <View style={{ height: "50%" }}>
           <Text style={styles.fonts} h5>
             Nombre de jours consécutifs:
           </Text>
-          <Badge status="warning" value={kidConsecutiveDaysNb} />
+          <Badge
+            badgeStyle={{
+              width: 40,
+              height: 40,
+              borderRadius: 100,
+              alignItems: "center",
+            }}
+            textStyle={{ fontSize: 30 }}
+            status="warning"
+            value={kidConsecutiveDaysNb}
+          />
         </View>
       </ScrollView>
     </View>
@@ -411,6 +446,7 @@ export const ConnectedStats = connect(
   mapStateToProps,
   mapDispatchToProps
 )(Stats);
+
 const renderScene = SceneMap({
   first: ConnectedPersonnalisation,
   second: ConnectedStats,
@@ -419,8 +455,8 @@ const renderScene = SceneMap({
 function DashboardScreen(props) {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "first", title: "Personnalisation" },
-    { key: "second", title: "Stat" },
+    { key: props.dashboardSwitch.perso, title: "Personnalisation" },
+    { key: props.dashboardSwitch.stat, title: "Stat" },
   ]);
 
   const renderTabBar = (props) => (
@@ -428,7 +464,10 @@ function DashboardScreen(props) {
       {...props}
       activeColor={"white"}
       inactiveColor={"#FFC9B9"}
-      style={{ backgroundColor: "#216869" }}
+      style={{
+        backgroundColor: "#216869",
+        paddingTop: windowHeight - windowHeight / 1.04,
+      }}
     />
   );
 
@@ -447,6 +486,8 @@ function DashboardScreen(props) {
 const styles = StyleSheet.create({
   container: {
     marginTop: StatusBar.currentHeight,
+    width: windowWidth,
+    // marginTop : windowHeight - windowHeight/1.03
   },
   card: {
     alignItems: "center",
@@ -468,7 +509,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
 
-    backgroundColor: "#9CC5A1",
+    backgroundColor: "white",
     borderRadius: 15,
     shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 1,
@@ -544,11 +585,9 @@ const styles = StyleSheet.create({
     backgroundGradientFrom: "#216869",
     backgroundGradientTo: "#216869",
     decimalPlaces: 2, // optional, defaults to 2dp
-    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    style: {
-      borderRadius: 16,
-    },
+    color: () => `#9CC5A1`,
+    labelColor: () => "#9CC5A1",
+
     propsForDots: {
       r: "6",
       strokeWidth: "2",
@@ -638,6 +677,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     activeKid: state.activeKid,
+    dashboardSwitch: state.dashboardSwitch,
   };
 }
 

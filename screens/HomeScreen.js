@@ -96,12 +96,18 @@ function HomeScreen(props) {
 
   var relatedList = props.activeKid.relatedUsers.map((mail, i) => {
     return (
-      <TouchableOpacity style={configStyle.button}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: 20,
+          justifyContent: "space-between",
+        }}
+      >
         <Text>{mail}</Text>
         <Button
           buttonStyle={configStyle.trashbutton}
-          containerStyle={{ paddingTop: 12 }}
-          icon={<FontAwesome5 name="trash" size={12} color="white" />}
+          icon={<FontAwesome5 name="trash" size={10} color="white" />}
           onPress={() => {
             if (!bddToUpdate) {
               setBddToUpdate(true);
@@ -109,7 +115,7 @@ function HomeScreen(props) {
             props.suppRelated(mail);
           }}
         />
-      </TouchableOpacity>
+      </View>
     );
   });
 
@@ -186,24 +192,29 @@ function HomeScreen(props) {
         >
           <Text>Qui peut jouer avec {props.activeKid.kidFirstName}?</Text>
           <Text>Ajouter des membres</Text>
-          <View style={{ flexDirection: "row", width: "70%" }}>
-            <Input
-              // containerStyle={{ marginBottom: 25 }}
-              placeholder="ami@famille.fr"
-              onChangeText={(val) => setEmail(val)}
-            />
-            <Button
-              title="ajouter"
-              buttonStyle={{ backgroundColor: "#FFC9B9" }}
-              onPress={() => {
-                props.addRelated(email);
-                if (!bddToUpdate) {
-                  setBddToUpdate(true);
-                }
-              }}
-              type="solid"
-            />
-          </View>
+
+          <Input
+            // containerStyle={{ marginBottom: 25 }}
+            placeholder="ami@famille.fr"
+            onChangeText={(val) => setEmail(val)}
+            value={email}
+            autoCapitalize="none"
+            rightIcon={
+              <AntDesign
+                name="pluscircle"
+                size={24}
+                color="#FABE6D"
+                onPress={() => {
+                  props.addRelated(email);
+                  setEmail("");
+                  if (!bddToUpdate) {
+                    setBddToUpdate(true);
+                  }
+                }}
+              />
+            }
+          />
+
           {relatedList}
         </Overlay>
       </TouchableOpacity>
@@ -231,6 +242,7 @@ function HomeScreen(props) {
       }
       updateKid();
     }
+
     setIsListVisible(false);
   };
 
