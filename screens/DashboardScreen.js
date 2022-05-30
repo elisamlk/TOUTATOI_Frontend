@@ -192,7 +192,7 @@ const Personnalisation = (props) => {
       props.addNewWord(word);
       async function updateKid() {
         var response = await fetch(
-          `${configUrl.url}/kids/addKidCustomWord/${props.activeKid.kidId}`,
+          `${configUrl.url}/kids/addKidCustomWord/${props.activeKid.id}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -277,7 +277,7 @@ const Personnalisation = (props) => {
     setValue(item.value);
     async function updateKid() {
       var rawResponse = await fetch(
-        `${configUrl.url}/kids/KidGrade/${props.activeKid.kidId}`,
+        `${configUrl.url}/kids/KidGrade/${props.activeKid.id}`,
         {
           method: "PUT",
           headers: {
@@ -395,7 +395,7 @@ const Stats = (props) => {
   //   legend: ["Rainy Days"], // optional
   // };
 
-  // const data = [ 14, 80, 100, 55 ]
+  const fake = [2, 5, 10, 25, 30, 45, 50, 51, 60, 70];
 
   return (
     <View style={[styles.scene, {}]}>
@@ -419,7 +419,7 @@ const Stats = (props) => {
           /> */}
           <BarChart
             style={{ flex: 1, height: 190 }}
-            data={graphValues}
+            data={fake}
             gridMin={0}
             svg={{ fill: "#FFDBD0" }}
           />

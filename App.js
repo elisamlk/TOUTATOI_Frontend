@@ -23,6 +23,8 @@ import firstKid from "./reducers/firstKid";
 import dashboardSwitch from "./reducers/dashboardSwitch";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs();
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

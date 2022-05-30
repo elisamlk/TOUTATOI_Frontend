@@ -37,12 +37,26 @@ function AccueilScreen(props) {
     <View style={styles.container}>
       <Image
         style={styles.image}
-        source={require("../assets/logoTest.png")}></Image>
+        source={require("../assets/logoTest.png")}
+      ></Image>
+
+      <Text
+        style={{
+          padding: 30,
+          textAlign: "center",
+          fontFamily: "Lato_700Bold",
+          fontSize: 22,
+          color: "white",
+        }}
+      >
+        L'application pédagogique qui renforce les liens !
+      </Text>
 
       <View style={styles.buttonDisplay}>
         <TouchableOpacity
           style={styles.button1}
-          onPress={() => props.navigation.navigate("KidProfil")}>
+          onPress={() => props.navigation.navigate("KidProfil")}
+        >
           <Text style={styles.fonts} flex-start>
             C'est parti !
           </Text>
@@ -50,12 +64,14 @@ function AccueilScreen(props) {
 
         <TouchableOpacity
           style={styles.button2}
-          onPress={() => props.navigation.navigate("SignIn")}>
+          onPress={() => props.navigation.navigate("SignIn")}
+        >
           <Text style={styles.fonts}>J'ai un compte</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button2}
-          onPress={() => props.navigation.navigate("SignIn")}>
+          onPress={() => props.navigation.navigate("SignIn")}
+        >
           <Text style={styles.fonts}>Je suis invité</Text>
         </TouchableOpacity>
       </View>
@@ -69,6 +85,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // backgroundColor: "white",
     justifyContent: "space-between",
+    textAlign: "center",
 
     paddingBottom: 30,
     backgroundColor: "#9CC5A1",

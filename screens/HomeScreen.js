@@ -15,7 +15,6 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { styles } from "react-native-element-dropdown/src/components/TextInput/styles";
 
 function HomeScreen(props) {
-  const [isOverlayVisible, setIsOverlayVisible] = useState(false); //AFFICHAGE DE L'OVERLAY
   const [email, setEmail] = useState([]); //INPUT LISTE EMAIL
   const [isListVisible, setIsListVisible] = useState(false); //AFFICHAGE DE LA LISTE
   const [kidName, setKidName] = useState(""); //INPUT OVERLAY PRENOM DE L'ENFANT
@@ -56,13 +55,14 @@ function HomeScreen(props) {
 
       if (response.result) {
         let kidList = response.kidListToReturn;
-        kidList[0].isActive = true;
-        for (i = 1; i < kidList.length; i++) {
-          kidList[i].isActive = false;
+        if (kidList.length > 0) {
+          kidList[0].isActive = true;
+          for (i = 1; i < kidList.length; i++) {
+            kidList[i].isActive = false;
+          }
+          props.submitKidList(kidList);
+          props.selectKid(kidList[0]);
         }
-
-        props.submitKidList(kidList);
-        props.selectKid(kidList[0]);
         setGetKidResponse(true);
       }
     };
