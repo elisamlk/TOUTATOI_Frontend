@@ -54,9 +54,7 @@ const Personnalisation = (props) => {
   // Récupérer toutes les notions en BDD
   useEffect(() => {
     async function getAllNotions() {
-      var rawResponse = await fetch(
-        `${configUrl.url}/kids/getAllNotionsFromBdd`
-      );
+      var rawResponse = await fetch(`${configUrl.url}/getAllNotionsFromBdd`);
       var response = await rawResponse.json();
 
       let array = [];
@@ -277,7 +275,7 @@ const Personnalisation = (props) => {
     setValue(item.value);
     async function updateKid() {
       var rawResponse = await fetch(
-        `${configUrl.url}/kids/KidGrade/${props.activeKid.id}`,
+        `${configUrl.url}/kids/kidGrade/${props.activeKid.id}`,
         {
           method: "PUT",
           headers: {
@@ -674,7 +672,6 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     activeKid: state.activeKid,
-    dashboardSwitch: state.dashboardSwitch,
   };
 }
 

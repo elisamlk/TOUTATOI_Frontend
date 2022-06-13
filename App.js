@@ -20,7 +20,6 @@ import activeKid from "./reducers/activeKid";
 import kidList from "./reducers/kidList";
 import answerList from "./reducers/answerList";
 import firstKid from "./reducers/firstKid";
-import dashboardSwitch from "./reducers/dashboardSwitch";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 import { LogBox } from "react-native";
@@ -35,7 +34,6 @@ const store = createStore(
     kidList,
     firstKid,
     answerList,
-    dashboardSwitch,
   })
 );
 

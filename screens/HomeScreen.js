@@ -181,10 +181,6 @@ function HomeScreen(props) {
             icon={<FontAwesome5 name="trash" size={12} color="white" />}
             disabled={isSelected !== i ? true : false}
             disabledStyle={{ backgroundColor: "grey" }}
-            onPress={() => {
-              /* deleteKid(kidItem); */
-              // props.deleteAKid(kidItem.kidId);
-            }}
           />
           {shareButton}
         </View>
@@ -241,7 +237,7 @@ function HomeScreen(props) {
     if (bddToUpdate) {
       async function updateKid() {
         var rawResponse = await fetch(
-          `${configUrl.url}/kids/KidRelatedUsers/${props.activeKid.id}`,
+          `${configUrl.url}/kids/kidRelatedUsers/${props.activeKid.id}`,
           {
             method: "PUT",
             headers: {
@@ -453,9 +449,6 @@ function mapDispatchToProps(dispatch) {
     },
     submitKidList: function (kidList) {
       dispatch({ type: "submitKidList", kidList });
-    },
-    deleteAKid: function (kidId) {
-      dispatch({ type: "deleteKid", kidId });
     },
     activeAKid: function (item) {
       dispatch({ type: "activeKid", item });
