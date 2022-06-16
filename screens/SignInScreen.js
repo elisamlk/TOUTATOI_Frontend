@@ -31,77 +31,28 @@ function SignInScreen(props) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={configStyle.signInScreenContainer}>
       <Text style={configStyle.titleH1}>Renseignez votre adresse mail</Text>
-      <View style={styles.containerForm}>
+      <View style={configStyle.containerForm}>
         <Input
-          style={styles.input}
+          style={configStyle.input}
           inputContainerStyle={{ borderBottomWidth: 0 }}
           placeholder="laura@gmail.com"
           autoCapitalize="none"
           leftIcon={<Ionicons name="mail-outline" size={24} color="#49A078" />}
           onChangeText={(val) => setEmail(val)}
         />
-        <Text style={styles.error}>{error}</Text>
+        <Text style={configStyle.error}>{error}</Text>
       </View>
-      <TouchableOpacity style={styles.button1} onPress={() => submitMail()}>
-        <Text style={styles.fonts}>Continuer</Text>
+      <TouchableOpacity
+        style={configStyle.button1}
+        onPress={() => submitMail()}
+      >
+        <Text style={configStyle.signUpScreenFonts}>Continuer</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "white",
-    justifyContent: "space-between",
-    paddingTop: 50,
-    paddingBottom: 30,
-  },
-  h1: {
-    fontFamily: "Lato_400Regular",
-    fontSize: 20,
-    textAlign: "center",
-  },
-  containerForm: {
-    backgroundColor: "#9CC5A1",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 290,
-    height: 200,
-    borderRadius: 20,
-  },
-  input: {
-    width: 300,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    padding: 10,
-  },
-  button1: {
-    width: 190,
-    color: "white",
-    backgroundColor: "#49A078",
-    padding: 15,
-    marginRight: 10,
-    marginBottom: 10,
-    borderRadius: 20,
-  },
-  fonts: {
-    color: "white",
-    textAlign: "center",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  error: {
-    color: "red",
-    textAlign: "center",
-    fontFamily: "Lato_400Regular",
-    fontSize: 15,
-    marginTop: 10,
-  },
-});
 
 function mapDispatchToProps(dispatch) {
   return {

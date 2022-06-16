@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import {
   StyleSheet,
   Text,
@@ -7,12 +10,12 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { connect } from "react-redux";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+
 import configUrl from "../config/url.json";
+import configStyle from "../config/style";
 
 function AccueilScreen(props) {
   useEffect(() => {
@@ -34,97 +37,42 @@ function AccueilScreen(props) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={configStyle.accueilScreenContainer}>
       <Image
-        style={styles.image}
+        style={configStyle.image}
         source={require("../assets/logoTest.png")}
       ></Image>
 
-      <Text
-        style={{
-          padding: 30,
-          textAlign: "center",
-          fontFamily: "Lato_700Bold",
-          fontSize: 22,
-          color: "white",
-        }}
-      >
+      <Text style={configStyle.h1}>
         L'application pédagogique qui renforce les liens !
       </Text>
 
-      <View style={styles.buttonDisplay}>
+      <View>
         <TouchableOpacity
-          style={styles.button1}
+          style={configStyle.button1}
           onPress={() => props.navigation.navigate("KidProfil")}
         >
-          <Text style={styles.fonts} flex-start>
+          <Text style={configStyle.accueilScreenFonts} flex-start>
             C'est parti !
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.button2}
+          style={configStyle.button2}
           onPress={() => props.navigation.navigate("SignIn")}
         >
-          <Text style={styles.fonts}>J'ai un compte</Text>
+          <Text style={configStyle.accueilScreenFonts}>J'ai un compte</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button2}
+          style={configStyle.button2}
           onPress={() => props.navigation.navigate("SignIn")}
         >
-          <Text style={styles.fonts}>Je suis invité</Text>
+          <Text style={configStyle.accueilScreenFonts}>Je suis invité</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    // backgroundColor: "white",
-    justifyContent: "space-between",
-    textAlign: "center",
-
-    paddingBottom: 30,
-    backgroundColor: "#9CC5A1",
-  },
-  image: {
-    width: "100%",
-    borderBottomLeftRadius: 100,
-  },
-  h1: {
-    fontSize: 30,
-    fontWeight: "bold",
-    fontFamily: "Lato_400Regular",
-  },
-  button1: {
-    width: 190,
-    color: "white",
-    backgroundColor: "#49A078",
-    padding: 15,
-    marginRight: 10,
-    marginBottom: 10,
-    borderRadius: 20,
-  },
-  button2: {
-    width: 190,
-    color: "white",
-    backgroundColor: "#FFC9B9",
-    padding: 15,
-    marginRight: 10,
-    marginBottom: 10,
-    borderRadius: 20,
-  },
-
-  fonts: {
-    color: "white",
-    textAlign: "center",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -135,82 +83,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(null, mapDispatchToProps)(AccueilScreen);
-
-// const windowWidth = Dimensions.get("window").width;
-// const windowHeight = Dimensions.get("window").height;
-// import monjson from "../jsonModels/url.json";
-
-// export default function AccueilScreen(props) {
-//   return (
-//     <View style={styles.container}>
-//       <Text h1>Bienvenue sur TOUTATOI</Text>
-
-//       <Image
-//         style={styles.image}
-//         source={require("../assets/ImageAccueilTest.png")}
-//       />
-
-//       <View>
-//         <TouchableOpacity
-//           style={styles.button1}
-//           onPress={() => props.navigation.navigate("KidProfil")}
-//         >
-//           <Text style={styles.fonts} flex-start>
-//             C'est parti !
-//           </Text>
-//         </TouchableOpacity>
-
-//         <TouchableOpacity
-//           style={styles.button2}
-//           onPress={() => props.navigation.navigate("SignIn")}
-//         >
-//           <Text style={styles.fonts}>J'ai un compte</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity
-//           style={styles.button2}
-//           onPress={() => props.navigation.navigate("SignIn")}
-//         >
-//           <Text style={styles.fonts}>Je suis invité</Text>
-//         </TouchableOpacity>
-//       </View>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     alignItems: "center",
-//     justifyContent: "space-around",
-//   },
-//   buttonDisplay: {
-//     flexDirection: "row",
-//     flexWrap: "wrap",
-//   },
-//   button1: {
-//     color: "white",
-//     backgroundColor: "#49A078",
-//     width: 200,
-//     padding: 4,
-//     marginRight: 10,
-//     marginBottom: 10,
-//   },
-//   button2: {
-//     color: "white",
-//     backgroundColor: "#FFC9B9",
-//     width: 200,
-//     padding: 4,
-//     marginRight: 10,
-//     marginBottom: 10,
-//   },
-//   fonts: {
-//     color: "white",
-//     marginTop: 10,
-//     marginBottom: 8,
-//     textAlign: "center",
-//   },
-//   image: {
-//     width: windowWidth - windowWidth / 2,
-//     height: windowHeight - windowHeight / 2,
-//   },
-// });

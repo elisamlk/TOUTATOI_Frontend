@@ -18,9 +18,16 @@ export default function (activeKid = {}, action) {
         "dans ",
         activeKidCopy.customWords
       );
-
       activeKidCopy.customWords.push({ label: action.newWord });
-      activeKidCopy.customWords.sort((a, b) => b.label - b.label);
+      activeKidCopy.customWords.sort((a, b) => {
+        if (a.label.toLowerCase() < b.label.toLowerCase()) {
+          return -1;
+        }
+        if (a.label.toLowerCase() > b.label.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      });
       return activeKidCopy;
     case "deleteWord":
       activeKidCopy.customWords = activeKidCopy.customWords.filter(

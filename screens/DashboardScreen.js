@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import {
   StyleSheet,
   View,
@@ -6,7 +7,6 @@ import {
   StatusBar,
   ScrollView,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Switch,
 } from "react-native";
 //import { BarChart } from "react-native-chart-kit";
@@ -15,15 +15,14 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { Overlay, Badge, Input, Button } from "react-native-elements";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { connect } from "react-redux";
-import configUrl from "../config/url.json";
 import { FontAwesome5 } from "@expo/vector-icons";
+
+import configUrl from "../config/url.json";
 import configStyle from "../config/style";
+
 // import { AntDesign } from '@expo/vector-icons';
 import { BarChart, XAxis } from "react-native-svg-charts";
 import * as scale from "d3-scale";
-
-import activeKid from "../reducers/activeKid";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -44,7 +43,6 @@ const Personnalisation = (props) => {
   const [allNotionsList, setAllNotionsList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [allNotionsResponse, setAllNotionsResponse] = useState(false);
-  const [kidNotionsResponse, setKidNotionsResponse] = useState(false);
   const [openSubCategory, setOpenSubCategory] = useState("");
   const [openNotionList, setOpenNotionList] = useState([]);
   const [bddToUpdate, setBddToUpdate] = useState(false);
@@ -133,8 +131,8 @@ const Personnalisation = (props) => {
 
   var notionsToDisplay = openNotionList.map((notion, f) => {
     return (
-      <View key={f} style={styles.notionName}>
-        <Text style={styles.notionText}>{notion.notionName}</Text>
+      <View key={f} style={configStyle.notionName}>
+        <Text style={configStyle.notionText}>{notion.notionName}</Text>
         <Switch
           trackColor={{ false: "#767577", true: "#9CC5A1" }}
           thumbColor={props.activeKid.activatedNotions.some((e) =>
@@ -159,14 +157,14 @@ const Personnalisation = (props) => {
             OpenSubcategory(item);
           }}
         >
-          <Text style={styles.button}>{item}</Text>
+          <Text style={configStyle.notionButton}>{item}</Text>
         </TouchableOpacity>
       );
     });
     return (
-      <View key={i} style={styles.card}>
-        <Card.Title style={styles.title}>{data.category}</Card.Title>
-        <View style={styles.buttonDisplay}>{subCategory}</View>
+      <View key={i} style={configStyle.dashboardScreenCard}>
+        <Card.Title style={configStyle.title}>{data.category}</Card.Title>
+        <View style={configStyle.buttonDisplay}>{subCategory}</View>
         <Overlay
           style={styles.overlay}
           isVisible={isVisible}
@@ -175,9 +173,9 @@ const Personnalisation = (props) => {
           }}
         >
           <View>
-            <Text style={styles.title}>{openSubCategory}</Text>
+            <Text style={configStyle.title}>{openSubCategory}</Text>
           </View>
-          <View style={styles.notionNameDisplay}>{notionsToDisplay}</View>
+          <View style={configStyle.notionNameDisplay}>{notionsToDisplay}</View>
         </Overlay>
       </View>
     );
@@ -297,7 +295,7 @@ const Personnalisation = (props) => {
           <Text style={configStyle.titleH1}>
             Cockpit de {props.activeKid.firstName}
           </Text>
-          <Text style={styles.fonts} h4>
+          <Text style={configStyle.fonts} h4>
             Aidez nous à personnaliser le programme de votre enfant !
           </Text>
           <View style={styles.dropdowncontainer}>
@@ -330,8 +328,8 @@ const Personnalisation = (props) => {
               renderItem={renderItem}
             />
           </View>
-          <View style={styles.wordCard}>
-            <Card.Title style={styles.title}>Liste de mots</Card.Title>
+          <View style={configStyle.dashboardScreenCard}>
+            <Card.Title style={configStyle.title}>Liste de mots</Card.Title>
 
             <Input
               style={configStyle.inputList}
@@ -401,20 +399,11 @@ const Stats = (props) => {
         <Text style={configStyle.titleH1}>
           Cockpit de {props.activeKid.firstName}
         </Text>
-        <Text style={styles.fonts} h4>
+        <Text style={configStyle.fonts} h4>
           Suivez les progrès de votre enfant
         </Text>
 
         <View style={styles.barChart}>
-          {/* <BarChart
-            style={{ borderRadius: 10, alignItems: "center", marginBottom: 20 }}
-            data={data}
-            width={windowWidth - windowWidth / 9}
-            height={windowHeight - windowHeight / 1.4}
-            chartConfig={styles.chartConfig}
-            // withHorizontalLabels={false}
-            withInnerLines={true}
-          /> */}
           <BarChart
             style={{ flex: 1, height: 190 }}
             data={fake}
@@ -497,70 +486,11 @@ const styles = StyleSheet.create({
   container: {
     marginTop: StatusBar.currentHeight,
     width: windowWidth,
-    // marginTop : windowHeight - windowHeight/1.03
-  },
-  card: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 15,
-
-    paddingLeft: 16,
-    paddingRight: 14,
-    marginTop: 15,
-    marginBottom: 20,
-    marginLeft: 16,
-    marginRight: 16,
-  },
-  wordCard: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 15,
-    paddingLeft: 16,
-    paddingRight: 14,
-    marginTop: 15,
-    marginBottom: 20,
-    marginLeft: 16,
-    marginRight: 16,
-  },
-  buttonDisplay: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  button: {
-    color: "white",
-    backgroundColor: "#FABE6D",
-    padding: 8,
-    marginRight: 10,
-    marginBottom: 10,
   },
   scene: {
     flex: 1,
   },
 
-  fonts: {
-    marginTop: 10,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  title: {
-    marginTop: 10,
-    fontSize: 15,
-    fontFamily: "Lato_700Bold",
-    textAlign: "center",
-  },
-
-  notionName: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  notionNameDisplay: {
-    padding: 10,
-    width: 270,
-  },
   notionText: {
     fontSize: 15,
   },

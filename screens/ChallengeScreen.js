@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { connect } from "react-redux";
-import { Header, Card, Button } from "react-native-elements";
-import configUrl from "../config/url.json";
+
+import { Text, View, ScrollView } from "react-native";
+import { Card, Button } from "react-native-elements";
 import { FontAwesome } from "@expo/vector-icons";
 import { ButtonGroup } from "@rneui/themed";
+
+import configUrl from "../config/url.json";
+import configStyle from "../config/style";
 
 function ChallengeScreen(props) {
   const [challenge, setChallenge] = useState({});
@@ -31,38 +34,22 @@ function ChallengeScreen(props) {
     getChallenge();
   }, []);
 
-  console.log("challenge ", challenge);
-  console.log("challengeResponse", challengeResponse);
-
   let header = (
-    <Header
-      placement="center"
-      centerComponent={{
-        text: "Défi de " + props.activeKid.firstName + " !",
-        style: styles.défi,
-      }}
-      containerStyle={{
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "transparent",
-        marginBottom: 10,
-      }}
-    />
+    <Text style={configStyle.titleDash}>
+      Défi de {props.activeKid.firstName}
+    </Text>
   );
 
   if (!challengeResponse) {
     return (
-      <View style={styles.container}>
+      <View style={configStyle.container}>
         {header}
-        <Text style={styles.container}>Chargement...</Text>
+        <Text style={configStyle.container}>Chargement...</Text>
       </View>
     );
   }
 
-  if (pushResultsResponse) {
-    props.navigation.navigate("Dashboard");
-  }
-  console.log("questiontoshow ", questionList[0]);
+  //Affichage du bouton/label de la réponse
   let answer;
   if (questionList[idQuestionToShow].answerLabel) {
     if (!answerVisible) {
@@ -134,9 +121,7 @@ function ChallengeScreen(props) {
         }}
         title="TERMINER"
         onPress={() => {
-          // props.postChallenge();
           async function pushResults() {
-            console.log("liste results ", props.answerList);
             var rawResponse = await fetch(`${configUrl.url}/resultsOfTheDay`, {
               method: "POST",
               headers: {
@@ -147,7 +132,6 @@ function ChallengeScreen(props) {
               }&resultListFromFront=${JSON.stringify(props.answerList)}`,
             });
             var response = await rawResponse.json();
-            console.log("retour push answer ", response);
             props.selectKid(response.savedKid);
             setPushResultsResponse(true);
           }
@@ -155,6 +139,10 @@ function ChallengeScreen(props) {
         }}
       />
     );
+  }
+
+  if (pushResultsResponse) {
+    props.navigation.navigate("Dashboard");
   }
 
   return (
@@ -166,9 +154,9 @@ function ChallengeScreen(props) {
         justifyContent: "space-evenly",
       }}
     >
-      <Text style={styles.titleDash}>Défi de {props.activeKid.firstName}</Text>
-      <View style={styles.upperView}>
-        <Text style={styles.funfact}>{challenge.funFact}</Text>
+      {header}
+      <View style={configStyle.upperView}>
+        <Text style={configStyle.funfact}>{challenge.funFact}</Text>
       </View>
       <Card
         containerStyle={{
@@ -179,7 +167,7 @@ function ChallengeScreen(props) {
         }}
         wrapperStyle={{ padding: 0, margin: 0, justifyContent: "flex-end" }}
       >
-        <View style={styles.questionNuméro}>
+        <View style={configStyle.questionNumber}>
           <Button
             buttonStyle={{
               backgroundColor: "#216869",
@@ -244,54 +232,6 @@ function ChallengeScreen(props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    textAlign: "center",
-    alignItems: "center",
-    padding: 25,
-  },
-  défi: {
-    color: "black",
-    fontFamily: "Lato_400Regular",
-    fontSize: 25,
-  },
-  funfact: {
-    fontFamily: "Lato_400Regular",
-    color: "black",
-    marginHorizontal: 20,
-    marginVertical: 20,
-  },
-  upperView: {
-    backgroundColor: "#A6CFAB",
-    borderRadius: 25,
-    marginBottom: 10,
-  },
-
-  questionNuméro: {
-    display: "flex",
-    flexDirection: "row",
-    backgroundColor: "#216869",
-    width: "100%",
-    alignItems: "center",
-    height: 50,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-  },
-  downButtonsView: {
-    flexDirection: "row",
-    marginTop: "20%",
-    marginHorizontal: "25%",
-  },
-  titleDash: {
-    textAlign: "center",
-    marginTop: 10,
-    marginBottom: 8,
-    fontFamily: "Lato_400Regular",
-    fontSize: 25,
-  },
-});
 
 function mapStateToProps(state) {
   return {

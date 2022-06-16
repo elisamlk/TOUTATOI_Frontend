@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
-import { Header, Card, Button, Overlay, Input } from "react-native-elements";
+import { Button, Overlay, Input } from "react-native-elements";
 import { Text } from "@rneui/themed";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { connect } from "react-redux";
-import { createPortal } from "react-dom";
 import configUrl from "../config/url.json";
-import { CardDivider } from "@rneui/base/dist/Card/Card.Divider";
 import configStyle from "../config/style";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { styles } from "react-native-element-dropdown/src/components/TextInput/styles";
 
 function HomeScreen(props) {
   const [email, setEmail] = useState([]); //INPUT LISTE EMAIL
@@ -36,6 +33,12 @@ function HomeScreen(props) {
     let sendKid = {
       id: response.kidId,
       firstName: kidName,
+      testedChallenges: [],
+      relatedUsers: [],
+      customWords: [],
+      xp: [],
+      activatedNotions: [],
+      consecutiveDaysNb: 0,
       isActive: false,
       isRelated: false,
     };
@@ -209,7 +212,8 @@ function HomeScreen(props) {
             // containerStyle={{ marginBottom: 25 }}
             placeholder="ami@famille.fr"
             onChangeText={(val) => setEmail(val)}
-            value={email}
+            // attention : le type attendu pour la value est une string, non un array
+            value={String(email)}
             autoCapitalize="none"
             rightIcon={
               <AntDesign

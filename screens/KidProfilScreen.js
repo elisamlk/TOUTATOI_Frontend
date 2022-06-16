@@ -11,6 +11,7 @@ function KidProfilScreen(props) {
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
   const [value, setValue] = useState(null); /* classe de l'enfant (CP, CE1) */
+  // A QUOI SERT ERROR ? C'était avant quand input pour le grade (et non une liste déroulante ?)
   const [error, setError] = useState("");
 
   const data = [
@@ -51,19 +52,19 @@ function KidProfilScreen(props) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={configStyle.signInScreenContainer}>
       <Text style={configStyle.titleH1}>Créez l'espace dédié à l'enfant</Text>
       <Text style={configStyle.fonts} h4>
         Vous pourrez rajouter des profils plus tard
       </Text>
-      <View style={styles.containerForm}>
+      <View style={configStyle.kidProfilScreenContainerForm}>
         <Input
-          style={styles.input}
+          style={configStyle.input}
           placeholder="Prénom"
           onChangeText={(val) => setName(val)}
           inputContainerStyle={{ borderBottomWidth: 0 }}
         />
-        <Text style={{marginBottom:10}}>Classe de l'enfant</Text>
+        <Text style={{ marginBottom: 10 }}>Classe de l'enfant</Text>
         <Dropdown
           style={configStyle.dropdown}
           placeholderStyle={configStyle.placeholderStyle}
@@ -93,20 +94,20 @@ function KidProfilScreen(props) {
           )}
           renderItem={renderItem}
         />
-        <Text style={styles.error}>{error}</Text>
+        <Text style={configStyle.error}>{error}</Text>
       </View>
 
-      <Text style={styles.text}>
+      <Text style={configStyle.kidProfilScreenText}>
         En continuant, j'accepte les conditions générales d'utilisation.
       </Text>
       <View>
         <TouchableOpacity
-          style={styles.button1}
+          style={configStyle.button1}
           onPress={() => {
             submitChild();
           }}
         >
-          <Text style={styles.fonts} flex-start>
+          <Text style={configStyle.signUpScreenFonts} flex-start>
             Continuer
           </Text>
         </TouchableOpacity>
@@ -114,70 +115,6 @@ function KidProfilScreen(props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "white",
-    justifyContent: "space-between",
-    paddingTop: 50,
-    paddingBottom: 30,
-  },
-  h1: {
-    fontFamily: "Lato_400Regular",
-    fontSize: 20,
-  },
-  h2: {
-    fontFamily: "Lato_400Regular",
-    fontSize: 18,
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  containerForm: {
-    backgroundColor: "#9CC5A1",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 290,
-    height: 250,
-    borderRadius: 20,
-  },
-  button1: {
-    width: 190,
-    color: "white",
-    backgroundColor: "#49A078",
-    padding: 15,
-    marginRight: 10,
-    marginBottom: 10,
-    borderRadius: 20,
-  },
-  fonts: {
-    color: "white",
-    textAlign: "center",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  text: {
-    textAlign: "center",
-    fontFamily: "Lato_400Regular",
-    marginBottom: 20,
-    padding: 20,
-    fontSize: 15,
-  },
-  input: {
-    width: 300,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    padding: 10,
-  },
-  error: {
-    color: "red",
-    textAlign: "center",
-    fontFamily: "Lato_400Regular",
-    fontSize: 15,
-    marginTop: 10,
-  },
-});
 
 function mapDispatchToProps(dispatch) {
   return {

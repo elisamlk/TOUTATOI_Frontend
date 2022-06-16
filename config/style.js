@@ -3,6 +3,65 @@ const configStyle = {
     alignItems: "center",
     marginTop: 30,
   },
+  accueilScreenContainer: {
+    flex: 1,
+    alignItems: "center",
+    // backgroundColor: "white",
+    justifyContent: "space-between",
+    textAlign: "center",
+
+    paddingBottom: 30,
+    backgroundColor: "#9CC5A1",
+  },
+  //aussi utilisé pour le challengeScreen
+  signUpScreenContainer: {
+    flex: 1,
+    textAlign: "center",
+    alignItems: "center",
+    padding: 25,
+  },
+  //aussi utilisé pour le kidProfilScreen et le confirmationCodeScreen (changer de nom)
+  signInScreenContainer: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "white",
+    justifyContent: "space-between",
+    paddingTop: 50,
+    paddingBottom: 30,
+  },
+  challengeScreenContainer: {
+    flex: 1,
+    textAlign: "center",
+    alignItems: "center",
+    padding: 25,
+  },
+  containerForm: {
+    backgroundColor: "#9CC5A1",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 290,
+    height: 200,
+    borderRadius: 20,
+  },
+  kidProfilScreenContainerForm: {
+    backgroundColor: "#9CC5A1",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 290,
+    height: 250,
+    borderRadius: 20,
+  },
+  image: {
+    width: "100%",
+    borderBottomLeftRadius: 100,
+  },
+  h1: {
+    padding: 30,
+    textAlign: "center",
+    fontFamily: "Lato_700Bold",
+    fontSize: 22,
+    color: "white",
+  },
   header: {
     alignItems: "center",
     justifyContent: "center",
@@ -14,6 +73,18 @@ const configStyle = {
     justifyContent: "space-between",
     alignItems: "center",
     height: 75,
+    backgroundColor: "white",
+    borderRadius: 15,
+    paddingLeft: 16,
+    paddingRight: 14,
+    marginTop: 15,
+    marginBottom: 20,
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  dashboardScreenCard: {
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 15,
     paddingLeft: 16,
@@ -36,8 +107,8 @@ const configStyle = {
     justifyContent: "space-around",
   },
   dropdown: {
-    marginTop:15,
-    marginBottom:15,
+    marginTop: 15,
+    marginBottom: 15,
     height: 50,
     width: "70%",
     backgroundColor: "white",
@@ -52,6 +123,13 @@ const configStyle = {
     shadowRadius: 1.41,
 
     elevation: 2,
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+    fontFamily: "Lato_400Regular",
+    fontSize: 15,
+    marginTop: 10,
   },
   icon: {
     marginRight: 5,
@@ -79,6 +157,35 @@ const configStyle = {
   inputSearchStyle: {
     display: "none",
   },
+  buttonDisplay: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  notionButton: {
+    color: "white",
+    backgroundColor: "#FABE6D",
+    padding: 8,
+    marginRight: 10,
+    marginBottom: 10,
+  },
+  button1: {
+    width: 190,
+    color: "white",
+    backgroundColor: "#49A078",
+    padding: 15,
+    marginRight: 10,
+    marginBottom: 10,
+    borderRadius: 20,
+  },
+  button2: {
+    width: 190,
+    color: "white",
+    backgroundColor: "#FFC9B9",
+    padding: 15,
+    marginRight: 10,
+    marginBottom: 10,
+    borderRadius: 20,
+  },
   buttonList: {
     width: 40,
     color: "white",
@@ -104,6 +211,12 @@ const configStyle = {
   inputShare: {
     fontSize: 15,
   },
+  input: {
+    width: 300,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 10,
+  },
   words: {
     flexDirection: "row",
     alignItems: "center",
@@ -113,6 +226,21 @@ const configStyle = {
     paddingTop: 10,
     paddingRight: 5,
     paddingLeft: 10,
+  },
+  //aussi utilisé pour confirmationCodeScreen (nom à changer)
+  kidProfilScreenText: {
+    textAlign: "center",
+    fontFamily: "Lato_400Regular",
+    marginBottom: 20,
+    padding: 20,
+    fontSize: 15,
+  },
+  signUpScreenText: {
+    textAlign: "center",
+    fontFamily: "Lato_400Regular",
+    marginBottom: 20,
+    padding: 20,
+    fontSize: 15,
   },
   wordsListItem: {
     flexDirection: "row",
@@ -125,6 +253,12 @@ const configStyle = {
     fontFamily: "Lato_400Regular",
     fontSize: 25,
   },
+  title: {
+    marginTop: 10,
+    fontSize: 15,
+    fontFamily: "Lato_700Bold",
+    textAlign: "center",
+  },
   textH6: {
     fontSize: 17,
     textAlign: "center",
@@ -133,6 +267,63 @@ const configStyle = {
     marginTop: 10,
     marginBottom: 20,
     textAlign: "center",
+  },
+  //pour le suivant : Aussi utilisé pour les écrans signIn et kidprofil et confirmationCodeScreen (nom à changer)
+  signUpScreenFonts: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  accueilScreenFonts: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  //Pas sûre que ce soit utile. Rien ne change quand je le supprime
+  notionName: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  //Idem, je ne vois pas à quoi ça sert
+  notionNameDisplay: {
+    padding: 10,
+    width: 270,
+  },
+  //Idem, je ne vois pas à quoi ça sert
+  notionText: {
+    fontSize: 15,
+  },
+  funfact: {
+    fontFamily: "Lato_400Regular",
+    color: "black",
+    marginHorizontal: 20,
+    marginVertical: 20,
+  },
+  upperView: {
+    backgroundColor: "#A6CFAB",
+    borderRadius: 25,
+    marginBottom: 10,
+  },
+  questionNumber: {
+    display: "flex",
+    flexDirection: "row",
+    backgroundColor: "#216869",
+    width: "100%",
+    alignItems: "center",
+    height: 50,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+  },
+  titleDash: {
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 8,
+    fontFamily: "Lato_400Regular",
+    fontSize: 25,
   },
 };
 
